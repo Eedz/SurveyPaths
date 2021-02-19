@@ -5,6 +5,16 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPaths", "SurveyPaths\SurveyPaths.csproj", "{E12C51A5-95AD-47A6-BFF1-E78059CC8C79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "..\DataAccessLayer\DataAccessLayer\DataAccessLayer.csproj", "{A95EC154-7009-4323-A432-1261B2CC7124}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITCLib", "..\ITCLib\ITCLib\ITCLib.csproj", "{1F878409-8602-4DC3-A0CB-45CCCC21289E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanLogicParser", "..\BooleanLogicExpressionParser\BooleanLogicParser\BooleanLogicParser.csproj", "{671BC84B-7C04-49CE-ABFA-86A1972BE701}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPathsTests", "SurveyPathsTests\SurveyPathsTests.csproj", "{9F3AC108-1E14-492E-B070-949000DA337D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXMLHelper", "..\OpenXMLHelper\OpenXMLHelper\OpenXMLHelper.csproj", "{4768A591-7669-4ABE-8F28-F02D43D475A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +25,26 @@ Global
 		{E12C51A5-95AD-47A6-BFF1-E78059CC8C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E12C51A5-95AD-47A6-BFF1-E78059CC8C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E12C51A5-95AD-47A6-BFF1-E78059CC8C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A95EC154-7009-4323-A432-1261B2CC7124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A95EC154-7009-4323-A432-1261B2CC7124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A95EC154-7009-4323-A432-1261B2CC7124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A95EC154-7009-4323-A432-1261B2CC7124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F878409-8602-4DC3-A0CB-45CCCC21289E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F878409-8602-4DC3-A0CB-45CCCC21289E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F878409-8602-4DC3-A0CB-45CCCC21289E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F878409-8602-4DC3-A0CB-45CCCC21289E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671BC84B-7C04-49CE-ABFA-86A1972BE701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671BC84B-7C04-49CE-ABFA-86A1972BE701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671BC84B-7C04-49CE-ABFA-86A1972BE701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671BC84B-7C04-49CE-ABFA-86A1972BE701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F3AC108-1E14-492E-B070-949000DA337D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F3AC108-1E14-492E-B070-949000DA337D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F3AC108-1E14-492E-B070-949000DA337D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F3AC108-1E14-492E-B070-949000DA337D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
