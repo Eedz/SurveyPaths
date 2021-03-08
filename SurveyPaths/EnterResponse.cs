@@ -58,8 +58,8 @@ namespace SurveyPaths
         {
             LinkedQuestion q = (LinkedQuestion)cboVarName.SelectedItem;
             int response = Int32.Parse((string)cboResponse.SelectedItem);
-
-            Response = new Answer(q.VarName.RefVarName, response);
+            string responseCode = (string)cboResponse.SelectedItem;
+            Response = new Answer(q.VarName.RefVarName, responseCode);
             Close();
         }
 

@@ -31,10 +31,14 @@ namespace SurveyPaths
 
         List<Respondent> RespondentList;
 
+        bool loading = false; // true if we are loading a past run
+
         List<string> CustomList;
         //public string SavedRunLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing\\Saved Timing Runs";
        // public string WeightLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing";
         public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing";
+        public bool ExcludeCustomList;
+        public bool OnlyCustomList;
 
         public Form1()
         {
@@ -42,34 +46,44 @@ namespace SurveyPaths
 
             bs = new BindingSource();
             bsRun = new BindingSource();
-            
-            cboSurvey.DataSource = DBAction.GetSurveyList();
-            cboSurvey.SelectedItem = null;
-            
-            cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;       
+            bindingNavigator1.BindingSource = bs;
 
             CustomList = new List<string>();
+            DoCustomList();
+
             AddRespondents();
+
             NewTimingRun();
 
-            
+            // bindings
+            bsRun.DataSource = CurrentTiming;
+
+            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.SelectedItem = null;
 
             cboTimingScheme.DataSource = Enum.GetValues(typeof(TimingReportType));
-
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", bsRun, "SurveyCode"));
-
-            cboTimingScheme.DataBindings.Add(new Binding("SelectedItem", bsRun, "ReportType"));
-
+            cboTimingScheme.DataBindings.Add(new Binding("SelectedItem", bsRun, "ReportType", true, DataSourceUpdateMode.OnPropertyChanged));
             cboUserType.DataBindings.Add(new Binding("SelectedItem", bsRun, "User"));
-
             cboMaxMin.DataSource = Enum.GetValues(typeof(TimingType));
             cboMaxMin.DataBindings.Add(new Binding("SelectedItem", bsRun, "TimingPath"));
-
             txtTimingTitle.DataBindings.Add("Text", bsRun, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
-            txtWPM.DataBindings.Add(new Binding("Text", bsRun, "WPM"));
+            txtKnownWPM.DataBindings.Add(new Binding("Text", bsRun, "WPM"));
             txtStartAt.DataBindings.Add(new Binding("Text", bsRun, "StartQ"));
             lstResponses.DataSource = new BindingList<Answer>(CurrentTiming.User.Responses);
+            rbKnownWPM.Checked = true;
 
+            txtVarName.DataBindings.Clear();
+            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
+
+            txtQnum.DataBindings.Clear();
+            txtQnum.DataBindings.Add("Text", bs, "Qnum");
+
+            txtWeight.DataBindings.Clear();
+            txtWeight.DataBindings.Add("Text", bs, "Weight.Value");
+
+            cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;
+            bs.CurrentChanged += Bs_CurrentChanged;
         }
 
         
@@ -77,284 +91,29 @@ namespace SurveyPaths
         private void DoCustomList()
         {
             CustomList = new List<string>();
-            CustomList.Add("SB205");
-            CustomList.Add("SB207");
-            CustomList.Add("SB211");
-            CustomList.Add("NC912");
-            CustomList.Add("CH801");
-            CustomList.Add("CH811");
-            CustomList.Add("CH813");
-            CustomList.Add("CH815");
-            CustomList.Add("CH817");
-            CustomList.Add("KN211");
-            CustomList.Add("KN231");
-            CustomList.Add("KN241");
-            CustomList.Add("KN246");
-            CustomList.Add("KN259");
-            CustomList.Add("KN257");
-            CustomList.Add("KN221");
-            CustomList.Add("KN234");
-            CustomList.Add("KN244");
-            CustomList.Add("KN248");
-            CustomList.Add("WL655");
-            CustomList.Add("WL427");
-            CustomList.Add("ET115");
-            CustomList.Add("ET249");
-            CustomList.Add("PS212");
-            CustomList.Add("PR218");
-            CustomList.Add("NC301");
-            //CustomList.Add("NC302");
-            CustomList.Add("NC307");
-            CustomList.Add("NC317");
-            CustomList.Add("EQ321");
-            CustomList.Add("EQ412");
-            CustomList.Add("NC365");
-            CustomList.Add("EC409");
-            CustomList.Add("EC386");
-            CustomList.Add("EK420");
-            CustomList.Add("EK426");
-            CustomList.Add("EK427");
-            CustomList.Add("EK428");
-            CustomList.Add("EK429");
-            CustomList.Add("EP308");
-            CustomList.Add("EP302");
-            CustomList.Add("EP100");
-            CustomList.Add("EP450");
-            CustomList.Add("EP152");
-            CustomList.Add("EP170");
-            CustomList.Add("EP341");
-            CustomList.Add("EP140");
-            CustomList.Add("EP601");
-            CustomList.Add("EP608");
-            CustomList.Add("EA501");
-            CustomList.Add("EK270");
-            CustomList.Add("ES322");
-            CustomList.Add("RE431");
-            CustomList.Add("RE411");
-            CustomList.Add("ED508");
-            CustomList.Add("RE201");
-            CustomList.Add("EI325");
-            CustomList.Add("EC718");
-            CustomList.Add("EC712");
-            CustomList.Add("EC716");
-            CustomList.Add("EC710");
-            CustomList.Add("EC714");
-            CustomList.Add("EC735");
-            CustomList.Add("EC720");
-            CustomList.Add("EC775");
-            CustomList.Add("EC772");
-            CustomList.Add("EC779");
-            CustomList.Add("EF821");
-            CustomList.Add("EC739");
-            CustomList.Add("DI260");
-            CustomList.Add("DI262");
-
-            
-
-
-        }
-
-        private void DoCustomList14Oct()
-        {
-            CustomList = new List<string>();
-            CustomList.Add("SB226");
-
-            CustomList.Add("CH977o");
-            CustomList.Add("KN451");
-            CustomList.Add("KN803");
-            CustomList.Add("KN802");
-            CustomList.Add("LM365");
-            CustomList.Add("LM367");
-            CustomList.Add("LM368");
-            CustomList.Add("LM369");
-            CustomList.Add("LM366");
-            CustomList.Add("ET435");
-            CustomList.Add("ET437");
-            CustomList.Add("ET440");
-            CustomList.Add("ET535");
-            CustomList.Add("ET537");
-            CustomList.Add("ET539");
-            CustomList.Add("ET250");
-            CustomList.Add("ET252");
-            CustomList.Add("ET723");
-            CustomList.Add("ET729");
-            CustomList.Add("ET724");
-            CustomList.Add("ET725");
-            CustomList.Add("ET775");
-            CustomList.Add("ET728");
-            CustomList.Add("ET735");
-            CustomList.Add("ET737");
-            CustomList.Add("ET759");
-            CustomList.Add("ET760");
-            CustomList.Add("ET766");
-            CustomList.Add("ET767");
-            
-            CustomList.Add("AD601");
-            CustomList.Add("AD606");
+            CustomList.Add("BR380");
+            CustomList.Add("BR384");
+            CustomList.Add("IN601");
+            CustomList.Add("IN350");
             CustomList.Add("PU680");
-            CustomList.Add("ES420");
-            CustomList.Add("EP102");
-            CustomList.Add("EA814");
-            CustomList.Add("EA816");
-            CustomList.Add("EA810");
-            CustomList.Add("EA820");
-            CustomList.Add("EA818");
-
-            CustomList.Add("DI712");
-            CustomList.Add("DI703");
-            CustomList.Add("DI706");
-
-            CustomList.Add("DE403");
-            CustomList.Add("DE821");
-            CustomList.Add("DE831");
-            CustomList.Add("DE826");
-            CustomList.Add("DE836");
-            CustomList.Add("DE841");
-            CustomList.Add("DE846");
-            CustomList.Add("DE851");
-
-            CustomList.Add("DE931");
-            CustomList.Add("DE932");
-            CustomList.Add("DE933");
+            CustomList.Add("CV132");
+            CustomList.Add("CV136");
+            CustomList.Add("BI322");
+            CustomList.Add("BI324");
+            CustomList.Add("DE811");
+            CustomList.Add("HN512");
+            CustomList.Add("HN532");
+            CustomList.Add("HN740");
+            CustomList.Add("HN750");
+            CustomList.Add("HN708");
+            CustomList.Add("ET536");
+            CustomList.Add("ET436");
+            CustomList.Add("ET625");
 
 
         }
 
-        private void DoCustomList14OctCombined()
-        {
-            CustomList = new List<string>();
-            CustomList.Add("SB226");
 
-            CustomList.Add("CH977o");
-            CustomList.Add("KN451");
-            CustomList.Add("KN803");
-            CustomList.Add("KN802");
-            CustomList.Add("LM365");
-            CustomList.Add("LM367");
-            CustomList.Add("LM368");
-            CustomList.Add("LM369");
-            CustomList.Add("LM366");
-            CustomList.Add("ET435");
-            CustomList.Add("ET437");
-            CustomList.Add("ET440");
-            CustomList.Add("ET535");
-            CustomList.Add("ET537");
-            CustomList.Add("ET539");
-            CustomList.Add("ET250");
-            CustomList.Add("ET252");
-            CustomList.Add("ET723");
-            CustomList.Add("ET729");
-            CustomList.Add("ET724");
-            CustomList.Add("ET725");
-            CustomList.Add("ET775");
-            CustomList.Add("ET728");
-            CustomList.Add("ET735");
-            CustomList.Add("ET737");
-            CustomList.Add("ET759");
-            CustomList.Add("ET760");
-            CustomList.Add("ET766");
-            CustomList.Add("ET767");
-
-            CustomList.Add("AD601");
-            CustomList.Add("AD606");
-            CustomList.Add("PU680");
-            CustomList.Add("ES420");
-            CustomList.Add("EP102");
-            CustomList.Add("EA814");
-            CustomList.Add("EA816");
-            CustomList.Add("EA810");
-            CustomList.Add("EA820");
-            CustomList.Add("EA818");
-
-            CustomList.Add("DI712");
-            CustomList.Add("DI703");
-            CustomList.Add("DI706");
-
-            CustomList.Add("DE403");
-            CustomList.Add("DE821");
-            CustomList.Add("DE831");
-            CustomList.Add("DE826");
-            CustomList.Add("DE836");
-            CustomList.Add("DE841");
-            CustomList.Add("DE846");
-            CustomList.Add("DE851");
-
-            CustomList.Add("DE931");
-            CustomList.Add("DE932");
-            CustomList.Add("DE933");
-
-            CustomList.Add("SB205");
-            CustomList.Add("SB207");
-            CustomList.Add("SB211");
-            CustomList.Add("NC912");
-            CustomList.Add("CH801");
-            CustomList.Add("CH811");
-            CustomList.Add("CH813");
-            CustomList.Add("CH815");
-            CustomList.Add("CH817");
-            CustomList.Add("KN211");
-            CustomList.Add("KN231");
-            CustomList.Add("KN241");
-            CustomList.Add("KN246");
-            CustomList.Add("KN259");
-            CustomList.Add("KN257");
-            CustomList.Add("KN221");
-            CustomList.Add("KN234");
-            CustomList.Add("KN244");
-            CustomList.Add("KN248");
-            CustomList.Add("WL655");
-            CustomList.Add("WL427");
-            CustomList.Add("ET115");
-            CustomList.Add("ET249");
-            CustomList.Add("PS212");
-            CustomList.Add("PR218");
-            CustomList.Add("NC301");
-            //CustomList.Add("NC302");
-            CustomList.Add("NC307");
-            CustomList.Add("NC317");
-            CustomList.Add("EQ321");
-            CustomList.Add("EQ412");
-            CustomList.Add("NC365");
-            CustomList.Add("EC409");
-            CustomList.Add("EC386");
-            CustomList.Add("EK420");
-            CustomList.Add("EK426");
-            CustomList.Add("EK427");
-            CustomList.Add("EK428");
-            CustomList.Add("EK429");
-            CustomList.Add("EP308");
-            CustomList.Add("EP302");
-            CustomList.Add("EP100");
-            CustomList.Add("EP450");
-            CustomList.Add("EP152");
-            CustomList.Add("EP170");
-            CustomList.Add("EP341");
-            CustomList.Add("EP140");
-            CustomList.Add("EP601");
-            CustomList.Add("EP608");
-            CustomList.Add("EA501");
-            CustomList.Add("EK270");
-            CustomList.Add("ES322");
-            CustomList.Add("RE431");
-            CustomList.Add("RE411");
-            CustomList.Add("ED508");
-            CustomList.Add("RE201");
-            CustomList.Add("EI325");
-            CustomList.Add("EC718");
-            CustomList.Add("EC712");
-            CustomList.Add("EC716");
-            CustomList.Add("EC710");
-            CustomList.Add("EC714");
-            CustomList.Add("EC735");
-            CustomList.Add("EC720");
-            CustomList.Add("EC775");
-            CustomList.Add("EC772");
-            CustomList.Add("EC779");
-            CustomList.Add("EF821");
-            CustomList.Add("EC739");
-            CustomList.Add("DI260");
-            CustomList.Add("DI262");
-        }
 
         private void AddRespondents()
         {
@@ -415,13 +174,14 @@ namespace SurveyPaths
         private void NewTimingRun()
         {
             CurrentTiming = new SurveyTiming();
+            
             //CurrentTiming.StartQ = 53;//es2.5
             //CurrentTiming.StartQ = 65;//es2.5
             CurrentTiming.ReportType = TimingReportType.TimingWholeSurvey;
-            
-            cboSurvey.SelectedItem = "NZL3.5";
+
+            ChangeSurvey("JP4"); 
              
-            bsRun.DataSource = CurrentTiming;
+            //bsRun.DataSource = CurrentTiming;
 
             RefreshCurrentRecord();
         }
@@ -432,54 +192,80 @@ namespace SurveyPaths
         /// <param name="survey"></param>
         private void ChangeSurvey(string surveyCode)
         {
-            CurrentTiming.SurveyCode = surveyCode;
-            Survey survey = DBAction.GetSurveyInfo(surveyCode);
-            var qs = DBAction.GetSurveyQuestions(survey).ToList();
+            // set the current timing's survey and reference survey, set up question lists
+            SetSurvey(surveyCode);
 
             // populate user type list
             FilterUserTypes();
 
-            CurrentTiming.Questions.Clear();
+            bs.DataSource = CurrentTiming.Questions;
+            bs.ResetBindings(true);
             
+            UpdateResponses();
+            RefreshLists();
+            UpdateTiming();
+            UpdateVarList();
+
+            CountGateways();
+            RefreshCurrentRecord();
+        }
+
+        private void SetSurvey(string surveyCode)
+        {
+            CurrentTiming.SurveyCode = surveyCode;
+            Survey survey = DBAction.GetSurveyInfo(surveyCode);
+            double wave = survey.Wave;
+
+            if (wave > 1)
+            {
+                // set reference survey
+                string previousWaveCode = survey.SurveyCodePrefix + wave;
+                CurrentTiming.ReferenceSurvey = DBAction.GetSurveyInfo(previousWaveCode);
+                DBAction.FillQuestions(CurrentTiming.ReferenceSurvey);
+            }
+
+            var qs = DBAction.GetSurveyQuestions(survey).ToList();
+
+            CurrentTiming.Questions.Clear();
+
             foreach (SurveyQuestion q in qs)
             {
-                // include only custom list
-                //if (CustomList.Count != 0 && !CustomList.Any(x => x.Equals(q.VarName.RefVarName)))
-                //    continue;
-
-                //// exclude custom list
-                //if (CustomList.Count != 0 && CustomList.Any(x => x.Equals(q.VarName.RefVarName)))
-                //    continue;
+                //include only custom list
+                if (OnlyCustomList)
+                {
+                    if (CustomList.Count != 0 && !CustomList.Any(x => x.Equals(q.VarName.RefVarName)))
+                        continue;
+                }
+                else if (ExcludeCustomList)
+                {// exclude custom list
+                    if (CustomList.Count != 0 && CustomList.Any(x => x.Equals(q.VarName.RefVarName)))
+                        continue;
+                }
+                
 
                 if (IsOtherSpecify(qs, q))
                     continue;
 
                 CurrentTiming.Questions.Add(new LinkedQuestion(q));
             }
+
+            PopulateWeights();
             
+
             PopulateNextQuestionsString();
             PopulateFilters();
+        }
 
-            bs.DataSource = CurrentTiming.Questions;
-            
-            bindingNavigator1.BindingSource = bs;
-            bs.CurrentChanged += Bs_CurrentChanged;
-
-            txtVarName.DataBindings.Clear();
-            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
-
-            txtQnum.DataBindings.Clear();
-            txtQnum.DataBindings.Add("Text", bs, "Qnum");
-
-            txtWeight.DataBindings.Clear();
-            txtWeight.DataBindings.Add("Text", bs, "Weight.Value");
-
-            
-
-            UpdateResponses();
-            UpdateWeights();
-            UpdateTiming();
-            UpdateVarList();
+        // count gateways
+        private void CountGateways()
+        {
+            int gatewayCount = 0;
+            foreach (LinkedQuestion q in CurrentTiming.Questions)
+            {
+                if (CurrentTiming.GetDirectFilterVarList(q).Count() > 0)
+                    gatewayCount++;
+            }
+            textBox1.Text = gatewayCount.ToString();
         }
 
         /// <summary>
@@ -499,69 +285,60 @@ namespace SurveyPaths
         private void UpdateVarList()
         {
             cboGoToVar.DataSource = null;
-            cboGoToVar.DataSource = CurrentTiming.Questions;
+            
+            if (CurrentTiming.ReportType == TimingReportType.TimingWholeSurvey)
+                cboGoToVar.DataSource = CurrentTiming.Questions;
+            else if (CurrentTiming.ReportType == TimingReportType.TimingUser)
+            {
+                if (rbAllUserQ.Checked)
+                    cboGoToVar.DataSource = CurrentTiming.UserQuestions;
+                else if (rbMaxUserQs.Checked)
+                    cboGoToVar.DataSource = CurrentTiming.UserQuestionsMax;
+                else if (rbMinUserQs.Checked)
+                    cboGoToVar.DataSource = CurrentTiming.UserQuestionsMin;
+            }
+           
         }
 
-        private void UpdateWeights(bool overrideStartQ = false)
+        private void UpdateStage1Weights()
         {
-            if (CurrentTiming.Questions == null) return;
-            lstWeightedQuestionList.Items.Clear();
-            lstWeightedQuestionList.View = System.Windows.Forms.View.Details;
-
-            lstUnweightedQuestionList.Items.Clear();
-            lstUnweightedQuestionList.View = System.Windows.Forms.View.Details;
-
-            List<LinkedQuestion> list;
-
-            if (CurrentTiming.ReportType == TimingReportType.TimingUser && CurrentTiming.UserQuestions.Count() > 0)
-                list = CurrentTiming.UserQuestions;
-            else
-                list = CurrentTiming.Questions;
-
-            foreach (LinkedQuestion lq in list)
+            int count = 0;
+            foreach (LinkedQuestion lq in CurrentTiming.Questions)
             {
-
-                if (lq.PreP.StartsWith("Ask all."))
+                // separate this into a new void that assigns automatic weights
+                if (lq.PreP.StartsWith("Ask all.") || lq.PreP.Contains("Ask all."))
                 {
                     lq.Weight.Source = "A";
                     lq.Weight.Value = 1;
+                    count++;
                 }
 
                 if (lq.VarName.RefVarName.StartsWith("Z"))
                 {
                     lq.Weight.Value = 0;
                     lq.Weight.Source = "A";
+                    count++;
                 }
 
                 if (lq.IsDerived())
                 {
                     lq.Weight.Value = 0;
                     lq.Weight.Source = "A";
+                    count++;
                 }
 
                 if (lq.VarName.RefVarName.StartsWith("BI9"))
                 {
                     lq.Weight.Value = 0;
                     lq.Weight.Source = "A";
+                    count++;
                 }
-
-                ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString(), lq.GetTiming(CurrentTiming.WPM).ToString() });
-                li.Tag = lq;
-
-                if (lq.Weight.Value == -1)
-                    lstUnweightedQuestionList.Items.Add(li);
-                else
-                    lstWeightedQuestionList.Items.Add(li);
-
-
-
-                FormatListItem(li, GetQuestionType(li));
             }
 
-            lblMissingWeights.Text = "Missing weights: " + lstUnweightedQuestionList.Items.Count;
+            txtMessages.Text += count + " weights automatically assigned.\r\n";
         }
 
-        private void RefreshLists()
+         private void RefreshLists()
         {
             if (CurrentTiming.Questions == null) return;
 
@@ -575,29 +352,56 @@ namespace SurveyPaths
 
             if (CurrentTiming.ReportType == TimingReportType.TimingUser)
             {
-                list = CurrentTiming.UserQuestions;
+                if (rbAllUserQ.Checked)
+                    list = CurrentTiming.UserQuestions;
+                else if (rbMaxUserQs.Checked)
+                    list = CurrentTiming.UserQuestionsMax;
+                else if (rbMinUserQs.Checked)
+                    list = CurrentTiming.UserQuestionsMin;
+                else
+                    list = CurrentTiming.UserQuestions;
+
+                chUser.Width = 60;
+                chWeight.Width = 0;
+                chWeightSource.Width = 0;
+                
 
                 foreach (LinkedQuestion lq in list)
                 {
+                    string minmax = "";
 
-                    ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString() });
+                    if (CurrentTiming.UserQuestionsMax.Contains(lq) && CurrentTiming.UserQuestionsMin.Contains(lq) )
+                        minmax = "+/-";
+                    else if (CurrentTiming.UserQuestionsMax.Contains(lq) && !CurrentTiming.UserQuestionsMin.Contains(lq))
+                        minmax = "+";
+                    else if (CurrentTiming.UserQuestionsMin.Contains(lq) && !CurrentTiming.UserQuestionsMax.Contains(lq))
+                        minmax = "-";
+
+                    ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString(), lq.GetTiming(CurrentTiming.WPM).ToString(), minmax });
                     li.Tag = lq;
 
                     lstWeightedQuestionList.Items.Add(li);
 
                     FormatListItem(li, GetQuestionType(li));
                 }
+
                 lstUnweightedQuestionList.Visible = false;
                 lblMissingWeights.Visible = false;
+                grpMinMaxFilter.Visible = true;
             }
             else
             {
                 list = CurrentTiming.Questions;
 
+                chUser.Width = 0;
+                chWeight.Width = 60;
+                chWeightSource.Width = 60;
+
+
                 foreach (LinkedQuestion lq in list)
                 {
 
-                    ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString() });
+                    ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString(), lq.GetTiming(CurrentTiming.WPM).ToString() });
                     li.Tag = lq;
 
                     if (lq.Weight.Value == -1)
@@ -610,64 +414,77 @@ namespace SurveyPaths
                 }
 
                 lblMissingWeights.Text = "Missing weights: " + lstUnweightedQuestionList.Items.Count;
+                lstUnweightedQuestionList.Visible = true;
+                lblMissingWeights.Visible = true;
+                grpMinMaxFilter.Visible = false;
             }
         }
 
         private void UpdateTiming()
         {
-            if (CurrentTiming.WPM < 50)
+            if (CurrentTiming.WPM < 30)
                 return;
 
-            double totalTime;
-            lblTotalTime.Text = "";
-            lblTotalTime.Text = "Questions: " + CurrentTiming.Questions.Count();
+            bool notes = CurrentTiming.includeNotes;
 
-            totalTime = CurrentTiming.GetTiming(CurrentTiming.WPM);
+            //lblTotalQs.Text = "Questions: " + CurrentTiming.QuestionCount().ToString();
+            lblTotalTime.Text = "";
+           
+
+            CurrentTiming.TotalTime = Math.Round(CurrentTiming.GetTiming(CurrentTiming.WPM, notes),2);
+            CurrentTiming.TotalWeightedTime = Math.Round(CurrentTiming.GetWeightedTiming(CurrentTiming.WPM, notes),2);
+
+            
 
             if (chkWeightedToggle.Checked)
             {
-                for (int i = CurrentTiming.WPM - 50; i < CurrentTiming.WPM; i += 10)
+                for (int i = CurrentTiming.WPM - 30; i < CurrentTiming.WPM; i += 10)
                 {
-                    lblTotalTime.Text += "\r\nTime (" + i + " WPM): " + CurrentTiming.GetWeightedTiming(i).ToString("N2") + " mins weighted";
+                    lblTotalTime.Text += "\r\nTime (" + i + " WPM): " + CurrentTiming.GetWeightedTiming(i, notes).ToString("N2") + " mins weighted";
                 }
+                lblTotalTime.Text = lblTotalTime.Text.Substring(2);
 
-                lblTotalTime2.Text = "Time (" + CurrentTiming.WPM + " WPM): " + CurrentTiming.GetWeightedTiming(CurrentTiming.WPM).ToString("N2") + " mins  weighted";
+                
 
                 lblTotalTime3.Text = "";
-                for (int i = CurrentTiming.WPM + 10; i <= CurrentTiming.WPM + 50; i += 10)
+                for (int i = CurrentTiming.WPM + 10; i <= CurrentTiming.WPM + 30; i += 10)
                 {
-                    lblTotalTime3.Text += "Time (" + i + " WPM): " + CurrentTiming.GetWeightedTiming(i).ToString("N2") + " mins weighted\r\n";
+                    lblTotalTime3.Text += "Time (" + i + " WPM): " + CurrentTiming.GetWeightedTiming(i, notes).ToString("N2") + " mins weighted\r\n";
                 }
 
-                if (!string.IsNullOrEmpty(txtTargetTime.Text))
-                {
-                    txtTargetTimeWPM.Text = CurrentTiming.GetTargetWPM(Double.Parse(txtTargetTime.Text)).ToString("N2");
-                }
+                if (!string.IsNullOrEmpty(txtKnownTime.Text))
+                    txtTargetWPM.Text = CurrentTiming.GetTargetWPM(Double.Parse(txtKnownTime.Text)).ToString("N2");
+
+                txtTargetTime.DataBindings.Clear();
+                txtTargetTime.DataBindings.Add(new Binding("Text", CurrentTiming, "TotalWeightedTime"));
+
             }
             else
             {
                 for (int i = CurrentTiming.WPM - 50; i < CurrentTiming.WPM; i += 10)
                 {
-                    lblTotalTime.Text += "\r\nTime (" + i + " WPM): " + CurrentTiming.GetTiming(i).ToString("N2") + " mins";
+                    lblTotalTime.Text += "\r\nTime (" + i + " WPM): " + CurrentTiming.GetTiming(i, notes).ToString("N2") + " mins";
                 }
 
-                lblTotalTime2.Text = "Time (" + CurrentTiming.WPM + " WPM): " + totalTime.ToString("N2") + " mins";
+               
 
                 lblTotalTime3.Text = "";
                 for (int i = CurrentTiming.WPM + 10; i <= CurrentTiming.WPM + 50; i += 10)
                 {
-                    lblTotalTime3.Text += "Time (" + i + " WPM): " + CurrentTiming.GetTiming(i).ToString("N2") + " mins\r\n";
+                    lblTotalTime3.Text += "Time (" + i + " WPM): " + CurrentTiming.GetTiming(i, notes).ToString("N2") + " mins\r\n";
                 }
 
-                if (!string.IsNullOrEmpty(txtTargetTime.Text))
-                {
-                    txtTargetTimeWPM.Text = CurrentTiming.GetTargetWPM(Double.Parse(txtTargetTime.Text)).ToString("N2");
-                }
+                if (!string.IsNullOrEmpty(txtKnownTime.Text))
+                    txtTargetWPM.Text = CurrentTiming.GetTargetWPM(Double.Parse(txtKnownTime.Text)).ToString("N2");
+
+                txtTargetTime.DataBindings.Clear();
+                txtTargetTime.DataBindings.Add(new Binding("Text", CurrentTiming, "TotalTime"));
+                
             }
 
             
 
-            CurrentTiming.TotalTime = totalTime;
+            
         }
 
 
@@ -1067,13 +884,18 @@ namespace SurveyPaths
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            CurrentTiming = LoadXMLFile(File.ReadAllText(filePath));
-            
-            bsRun.DataSource = CurrentTiming;
+            loading = true;
 
-            bsRun.ResetBindings(true);
+            CurrentTiming = LoadXMLFile(File.ReadAllText(filePath));
+
+            bsRun.DataSource = CurrentTiming;
+            bs.DataSource = CurrentTiming.Questions;
+            
+           // bsRun.ResetBindings(true);
             RefreshLists();
             UpdateTiming();
+
+            loading = false;
         }
 
         // View
@@ -1141,7 +963,7 @@ namespace SurveyPaths
                     ImportWeightsFromWord(filePath);
 
                 RefreshLists();
-                //UpdateWeights();
+               
                 UpdateTiming();
             }
             catch (Exception ex)
@@ -1162,7 +984,7 @@ namespace SurveyPaths
 
             }
 
-            UpdateWeights();
+            RefreshLists();
         }
 
         private void assign1ToScreeningSectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1176,7 +998,7 @@ namespace SurveyPaths
 
             }
 
-            UpdateWeights(true);
+            RefreshLists();
         }
 
         // Reports
@@ -1218,7 +1040,7 @@ namespace SurveyPaths
             else if (path1 == TimingType.Min)
                 usertype1 = CurrentTiming.GetMinUser(usertype1);
             
-            CurrentTiming.User = usertype1;
+            CurrentTiming.SetUser(usertype1);
 
             List<LinkedQuestion> tripleList = CurrentTiming.GetRespondentQuestions(usertype1);
 
@@ -1228,7 +1050,7 @@ namespace SurveyPaths
             else if (path2 == TimingType.Min)
                 usertype2 = CurrentTiming.GetMinUser(usertype2);
           
-            CurrentTiming.User = usertype2;
+            CurrentTiming.SetUser(usertype2);
 
             List<LinkedQuestion> cigHTPList = CurrentTiming.GetRespondentQuestions(usertype2);
 
@@ -1396,7 +1218,7 @@ namespace SurveyPaths
             if (CurrentTiming.ReportType == TimingReportType.TimingWholeSurvey)
             {
                 CurrentTiming.TimingPath = TimingType.Undefined;
-                CurrentTiming.User = new Respondent();
+                CurrentTiming.SetUser(new Respondent());
                
             }
             else if (CurrentTiming.ReportType == TimingReportType.TimingUser)
@@ -1412,7 +1234,7 @@ namespace SurveyPaths
                     r = GetCurrentRespondent();
 
                 CurrentTiming.TimingPath = path;
-                CurrentTiming.User = r;
+                CurrentTiming.SetUser(r);
 
                 CurrentTiming.UserQuestions = CurrentTiming.GetRespondentQuestions(r, true);
                 
@@ -1425,7 +1247,7 @@ namespace SurveyPaths
             else 
             {
                 r = GetCurrentRespondent();
-                CurrentTiming.User = GetCurrentRespondent();
+                CurrentTiming.SetUser(GetCurrentRespondent());
                 CurrentTiming.UserQuestions = CurrentTiming.GetRespondentQuestions(r);
                
             }
@@ -1583,22 +1405,22 @@ namespace SurveyPaths
 
 
 
-            List<LinkedQuestion> directFilterList = CurrentTiming.GetDirectFilterVarList(CurrentQuestion);
-            List<LinkedQuestion> indirectFilterList = new List<LinkedQuestion>();
-            if (CurrentQuestion.GetQnumValue() > CurrentTiming.StartQ)
-            {
+            //List<LinkedQuestion> directFilterList = CurrentTiming.GetDirectFilterVarList(CurrentQuestion);
+            //List<LinkedQuestion> indirectFilterList = new List<LinkedQuestion>();
+            //if (CurrentQuestion.GetQnumValue() > CurrentTiming.StartQ)
+            //{
                 
 
-                foreach (LinkedQuestion q in directFilterList)
-                {
-                    indirectFilterList.AddRange(CurrentTiming.GetIndirectFilterVarList(q));
-                }
-                indirectFilterList = indirectFilterList.Except(directFilterList).ToList();
-            }
+            //    foreach (LinkedQuestion q in directFilterList)
+            //    {
+            //        indirectFilterList.AddRange(CurrentTiming.GetIndirectFilterVarList(q));
+            //    }
+            //    indirectFilterList = indirectFilterList.Except(directFilterList).ToList();
+            //}
             
 
-            txtDirectFilters.Text = string.Join("\r\n", directFilterList);
-            txtIndirectFilters.Text = string.Join("\r\n", indirectFilterList);
+            //txtDirectFilters.Text = string.Join("\r\n", directFilterList);
+            //txtIndirectFilters.Text = string.Join("\r\n", indirectFilterList);
         }
 
         #endregion
@@ -1625,27 +1447,22 @@ namespace SurveyPaths
 
         private void cmdTime_Click(object sender, EventArgs e)
         {
-            // get survey
-            // get user
-
-            CurrentTiming.TimingPath = GetMinMax();
-            CurrentTiming.User = GetUser();
-
-
-            // get timing scheme (by user or whole survey)
-            CurrentTiming.ReportType = GetTimingScheme();
-            if (CurrentTiming.ReportType != TimingReportType.TimingWholeSurvey)
+            
+            if (CurrentTiming.ReportType == TimingReportType.TimingUser)
             {
-                List<LinkedQuestion> list = CurrentTiming.GetRespondentQuestions(CurrentTiming.ReportType == TimingReportType.TimingUser);
-                CurrentTiming.UserQuestions = list;
+                CurrentTiming.UserQuestions = CurrentTiming.GetRespondentQuestions(true);
+                CurrentTiming.UserQuestionsMax = CurrentTiming.GetMaxQuestions();
+                CurrentTiming.UserQuestionsMin = CurrentTiming.GetMinQuestions();
             }
-
+            
             UpdateTiming();
+
+            RefreshLists();
         }
 
         private void cboSurvey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cboSurvey.SelectedItem != null)
+            if (cboSurvey.SelectedItem != null && !loading)
                 ChangeSurvey((string)cboSurvey.SelectedItem);
         }
 
@@ -1665,6 +1482,9 @@ namespace SurveyPaths
                     cboMaxMin.Enabled = true;
                     cmdShow.Enabled = true;
                     cmdAllQuestions.Enabled = true;
+                    lblResps.Visible = true;
+                    lstResponses.Visible = true;
+                    cmdAddResponse.Visible = true;
                     break;
                 case TimingReportType.TimingWholeSurvey: //"Whole Survey":
                 case TimingReportType.Undefined:
@@ -1673,6 +1493,9 @@ namespace SurveyPaths
                     cboMaxMin.Enabled = false;
                     cmdShow.Enabled = false ;
                     cmdAllQuestions.Enabled = false;
+                    lblResps.Visible = false;
+                    lstResponses.Visible = false;
+                    cmdAddResponse.Visible = false;
                     break;
                 
             }
@@ -1779,12 +1602,12 @@ namespace SurveyPaths
         {
             if (cboUserType.SelectedItem == null)
             {
-                CurrentTiming.User = null;
+                CurrentTiming.SetUser(new Respondent());
                 return;
             }
 
-            CurrentTiming.User = (Respondent)cboUserType.SelectedItem;
-
+            CurrentTiming.SetUser((Respondent)cboUserType.SelectedItem);
+            
             
 
             UpdateResponses();
@@ -1793,6 +1616,21 @@ namespace SurveyPaths
         
 
         #endregion
+
+
+        private void PopulateWeights()
+        {
+            // get file path
+            string folder = GetFilePath();
+            // stage 1
+            UpdateStage1Weights();
+            // stage 2
+            //ImportWeights(folder + CurrentTiming.SurveyCode + "-stage2.txt");
+            // stage 3
+            //ImportWeights(folder + CurrentTiming.SurveyCode + "-stage3.txt");
+            // stage 4
+            //ImportWeights(folder + CurrentTiming.SurveyCode + "-stage4.txt");
+        }
 
         private string GetFilePath()
         {
@@ -1817,7 +1655,7 @@ namespace SurveyPaths
             char waveLetter = (char) waveChar;
 
             // get previous wave
-            BindingList<SurveyQuestion> previousWaveQs = DBAction.GetSurveyQuestions(previousWave);
+            List<SurveyQuestion> previousWaveQs = DBAction.GetSurveyQuestions(previousWave).ToList();
         
             
             foreach (LinkedQuestion q in CurrentTiming.Questions)
@@ -1829,10 +1667,7 @@ namespace SurveyPaths
                 if (q.FilterList.Count == 0)
                     continue;
 
-                var match = previousWaveQs.FirstOrDefault(x => x.VarName.RefVarName.Equals(q.VarName.RefVarName));
-
-                // skip if same varname in previous wave has different filter
-                if (match == null || !match.PreP.Equals(q.PreP))
+                if (!AllVarsPresent(q.FilteredOn, previousWaveQs))
                     continue;
 
                 s.Append("%filterStat(newVar = " + q.VarName.FullVarName + ", filter = (");
@@ -1875,27 +1710,22 @@ namespace SurveyPaths
                 s.Length--; s.Length--;
                 s.Length--;
                 s.AppendLine(");");
-
-                //% filterStat(newVar = BQ49151, filter = (bBQ49141 = 4));
-                //% filterStat(newVar = SO49412, filter = (bFR49309v in (1:6)));
-                //% filterStat(newVar = SO49407, filter = (bSO49415 in (2:5) or bSO49419 in (2:5)));
-                //% filterStat(newVar = BR49608, filter = (bBR49310 = 1));
-                //% filterStat(newVar = BR49613, filter = (bBR49310 = 1));
-                //% filterStat(newVar = BR49630, filter = (bBR49626 = 1));
-                //% filterStat(newVar = ET49324, filter = (bET49328 ne 4));
-                //% filterStat(newVar = LM49745, filter = (bBR49327 = 1));
-                //% filterStat(newVar = LM49735, filter = (bBR49327 = 1));
-                //% filterStat(newVar = LM49746, filter = (bBR49327 = 1));
-                //% filterStat(newVar = LM49744, filter = (bBR49327 = 1));
-                //% filterStat(newVar = LM49749, filter = (bBR49327 = 1));
-                //% filterStat(newVar = EF49420, filter = (bNC49304 in (1:3) and bEC49375 = 3));
-                //% filterStat(newVar = EA49145, filter = (bNC49302 in (1, 2)));
-
-                
             }
            
 
             return s.ToString();
+        }
+
+        private bool AllVarsPresent(List<LinkedQuestion> filterVars, List<SurveyQuestion> refList)
+        {
+            bool allFound = false;
+
+            foreach (LinkedQuestion lq in filterVars) {
+                if (!refList.Exists(x=>x.VarName.RefVarName.Equals(lq.VarName.RefVarName)))
+                    return allFound;
+            }
+            allFound = true;
+            return allFound;
         }
 
         private string GenerateSASCodeOverallFreq(string project, string projectWave)
@@ -1953,6 +1783,10 @@ namespace SurveyPaths
             XmlAttribute runTitle = timingData.CreateAttribute("RunTitle");
             runTitle.Value = CurrentTiming.Title;
             surveyNode.Attributes.Append(runTitle);
+
+            XmlAttribute scheme = timingData.CreateAttribute("TimingScheme");
+            scheme.Value = CurrentTiming.ReportType.ToString();
+            surveyNode.Attributes.Append(scheme);
 
             XmlNode timing = timingData.CreateElement("Time");
             XmlAttribute time = timingData.CreateAttribute("Mins");
@@ -2020,6 +1854,10 @@ namespace SurveyPaths
                 XmlAttribute respoptions = timingData.CreateAttribute("RespOptions");
                 respoptions.Value = q.RespOptions;
                 varname.Attributes.Append(respoptions);
+
+                XmlAttribute respname = timingData.CreateAttribute("RespName");
+                respname.Value = q.RespName;
+                varname.Attributes.Append(respname);
 
                 XmlAttribute nrcodes = timingData.CreateAttribute("NRCodes");
                 nrcodes.Value = q.NRCodes;
@@ -2097,6 +1935,7 @@ namespace SurveyPaths
             newRun.TotalTime = Double.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["Mins"].InnerText) * 60;
             newRun.WPM = Int32.Parse( runData.SelectSingleNode("/SurveyTiming/Time").Attributes["WPM"].InnerText);
             newRun.StartQ = Int32.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["StartQ"].InnerText);
+            newRun.ReportType = (TimingReportType)Int32.Parse(runData.SelectSingleNode("/SurveyTiming").Attributes["Scheme"].InnerText);
             foreach (XmlNode q in runData.SelectNodes("/SurveyTiming/Questions/Question"))
             {
                 LinkedQuestion lq = new LinkedQuestion();
@@ -2112,8 +1951,10 @@ namespace SurveyPaths
                 lq.LitQ = q.Attributes["LitQ"].InnerText;
                 lq.PstI = q.Attributes["PstI"].InnerText;
                 lq.PstP = q.Attributes["PstP"].InnerText;
+                lq.RespName = q.Attributes["RespName"].InnerText;
                 lq.RespOptions = q.Attributes["RespOptions"].InnerText;
                 lq.NRCodes = q.Attributes["NRCodes"].InnerText;
+                
 
                 lq.Weight.Value = double.Parse(q.Attributes["Weight"].InnerText);
                 lq.Weight.Source = q.Attributes["WeightSource"].InnerText;
@@ -2245,7 +2086,8 @@ namespace SurveyPaths
                 return;
 
             string[] lines = System.IO.File.ReadAllLines(filePath);
-
+            string message = "";
+            int count = 0;
             try
             {
 
@@ -2265,25 +2107,32 @@ namespace SurveyPaths
 
                     LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname));
 
-                    if (q2 != null && q2.Weight.Source != "A") // do not override automatic weights
+                    if (q2 != null && q2.Weight.Source != "A")// do not override automatic weights
+                    {
                         q2.Weight = new Weight(weight, source);
+                        count++;
+                    }
 
-                   
+                    
                 }
             }catch (Exception e)
             {
                 int i = 0;
             }
-            
+
+            message = count + " weights imported from " + filePath.Substring(filePath.LastIndexOf("\\")+1) + "\r\n";
+            txtMessages.Text += message;
         }
 
+        // ignore blanks
         private void ImportWeightsFromWord(string filePath)
         {
 
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-           
+            string message = "";
+            int count = 0;
 
             // Open word document for read  
             using (var doc = WordprocessingDocument.Open(filePath, false))
@@ -2311,49 +2160,19 @@ namespace SurveyPaths
                     LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname));
 
                     if (q2 != null)
+                    {
                         q2.Weight = new Weight(weight, source);
+                        count++;
+                    }
 
                    
                 }
 
-                
-               
+                message = count + " weights imported from " + filePath.Substring(filePath.LastIndexOf("\\") + 1) + "\r\n";
+                txtMessages.Text += message;
+
             }
         
-
-
-        string[] lines = System.IO.File.ReadAllLines(filePath);
-
-            try
-            {
-
-                foreach (string line in lines)
-                {
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    int equals = line.IndexOf('=');
-                    int semicolon = line.IndexOf(';');
-                    int semicolon2 = line.IndexOf(';', semicolon + 1);
-
-                    string varname = line.Substring(0, semicolon);
-
-                    double weight = Double.Parse(line.Substring(semicolon + 1, semicolon2 - semicolon - 1));
-                    string source = line.Substring(semicolon2 + 1);
-
-                    LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname));
-
-                    if (q2 != null)
-                        q2.Weight = new Weight(weight, source);
-
-
-                }
-            }
-            catch (Exception)
-            {
-                int i = 0;
-            }
-
         }
 
    
@@ -2364,7 +2183,7 @@ namespace SurveyPaths
             // get currently selected respondent
             Respondent max = CurrentTiming.GetMaxUser(CurrentTiming.User);
 
-            CurrentTiming.User = max;
+            CurrentTiming.SetUser(max);
 
             // get the list of questions that this respondent should answer
             CurrentTiming.UserQuestions = CurrentTiming.GetRespondentQuestions(max, true);
@@ -2381,7 +2200,7 @@ namespace SurveyPaths
             // get currently selected respondent
             Respondent min = CurrentTiming.GetMinUser(CurrentTiming.User);
 
-            CurrentTiming.User = min;
+            CurrentTiming.SetUser(min);
 
             // get the list of questions that this respondent should answer
             CurrentTiming.UserQuestions = CurrentTiming.GetRespondentQuestions(min, true);
@@ -2435,6 +2254,7 @@ namespace SurveyPaths
             dt.Columns.Add(new DataColumn("Word Count"));
             dt.Columns.Add(new DataColumn("Timing Estimate"));
             dt.Columns.Add(new DataColumn("Weight"));
+            dt.Columns.Add(new DataColumn("Weight Source"));
             dt.Columns.Add(new DataColumn("Weighted Time"));
 
             double totalTime = 0;
@@ -2460,6 +2280,7 @@ namespace SurveyPaths
 
                 r["Timing Estimate"] = time;
                 r["Weight"] = weight;
+                r["Weight Source"] = lq.Weight.Source;
 
                 if (weight < 0)
                     r["Weighted Time"] = 0;
@@ -3393,9 +3214,50 @@ namespace SurveyPaths
             return result;
         }
 
+
         #endregion
 
-        
+        private void includeNotesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CurrentTiming.includeNotes = includeNotesToolStripMenuItem.Checked;
+        }
+
+        private void CustomListOptions_Click(object sender, EventArgs e)
+        {
+            if (excludeToolStripMenuItem.Checked)
+                limitToToolStripMenuItem.Checked = false;
+            else if (limitToToolStripMenuItem.Checked)
+                excludeToolStripMenuItem.Checked = false;
+
+            ExcludeCustomList = excludeToolStripMenuItem.Checked;
+            OnlyCustomList = limitToToolStripMenuItem.Checked;
+
+        }
+
+        private void TimingRadioButtons_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton rb = (RadioButton)sender;
+            if (rb.Tag.Equals("WPM"))
+            {
+                txtKnownWPM.Enabled = true;
+                txtTargetTime.Enabled = true;
+                txtKnownTime.Enabled = false;
+                txtTargetWPM.Enabled = false;
+            }
+            else if (rb.Tag.Equals("Time"))
+            {
+                txtKnownWPM.Enabled = false;
+                txtTargetTime.Enabled = false;
+                txtKnownTime.Enabled = true;
+                txtTargetWPM.Enabled = true;
+            }
+        }
+
+        private void ShowUserQs_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshLists();
+            UpdateVarList();
+        }
     }
 }
 

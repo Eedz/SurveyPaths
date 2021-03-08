@@ -42,7 +42,6 @@
             this.lblResps = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.cmdMeanTimes = new System.Windows.Forms.Button();
             this.cboUserType = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -64,6 +63,11 @@
             this.missingWeightsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sASSyntaxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateResponseFreqCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.includeNotesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.excludeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.limitToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.txtDirectFilters = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -75,11 +79,9 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cmdShow = new System.Windows.Forms.Button();
             this.txtQnum = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtWPM = new System.Windows.Forms.TextBox();
             this.cmdTime = new System.Windows.Forms.Button();
-            this.txtTargetTime = new System.Windows.Forms.TextBox();
-            this.txtTargetTimeWPM = new System.Windows.Forms.TextBox();
+            this.txtKnownTime = new System.Windows.Forms.TextBox();
+            this.txtTargetWPM = new System.Windows.Forms.TextBox();
             this.lstWeightedQuestionList = new System.Windows.Forms.ListView();
             this.chQnum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chRefVarName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -96,7 +98,6 @@
             this.chWeightSource2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chWordCount2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chTime2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lblTotalTime2 = new System.Windows.Forms.Label();
             this.lblTotalTime3 = new System.Windows.Forms.Label();
             this.txtStartAt = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -119,17 +120,31 @@
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.rbKnownTime = new System.Windows.Forms.RadioButton();
+            this.rbKnownWPM = new System.Windows.Forms.RadioButton();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtTargetTime = new System.Windows.Forms.TextBox();
+            this.txtKnownWPM = new System.Windows.Forms.TextBox();
             this.txtTimingTitle = new System.Windows.Forms.TextBox();
             this.cboTimingScheme = new System.Windows.Forms.ComboBox();
             this.lblScheme = new System.Windows.Forms.Label();
             this.lblMissingWeights = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.cmdRefreshLists = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtMessages = new System.Windows.Forms.TextBox();
+            this.grpMinMaxFilter = new System.Windows.Forms.GroupBox();
+            this.rbMaxUserQs = new System.Windows.Forms.RadioButton();
+            this.rbMinUserQs = new System.Windows.Forms.RadioButton();
+            this.rbAllUserQ = new System.Windows.Forms.RadioButton();
+            this.chUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
             this.bindingNavigator1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.grpMinMaxFilter.SuspendLayout();
             this.SuspendLayout();
             // 
             // rtbQuestionText
@@ -187,7 +202,7 @@
             // cmdAddResponse
             // 
             this.cmdAddResponse.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmdAddResponse.Location = new System.Drawing.Point(825, 29);
+            this.cmdAddResponse.Location = new System.Drawing.Point(1041, 29);
             this.cmdAddResponse.Name = "cmdAddResponse";
             this.cmdAddResponse.Size = new System.Drawing.Size(22, 23);
             this.cmdAddResponse.TabIndex = 13;
@@ -198,12 +213,13 @@
             // cmdAllQuestions
             // 
             this.cmdAllQuestions.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmdAllQuestions.Location = new System.Drawing.Point(155, 189);
+            this.cmdAllQuestions.Location = new System.Drawing.Point(1153, 108);
             this.cmdAllQuestions.Name = "cmdAllQuestions";
-            this.cmdAllQuestions.Size = new System.Drawing.Size(75, 23);
+            this.cmdAllQuestions.Size = new System.Drawing.Size(62, 23);
             this.cmdAllQuestions.TabIndex = 15;
             this.cmdAllQuestions.Text = "All Qs";
             this.cmdAllQuestions.UseVisualStyleBackColor = true;
+            this.cmdAllQuestions.Visible = false;
             this.cmdAllQuestions.Click += new System.EventHandler(this.cmdAllQuestions_Click);
             // 
             // cboSurvey
@@ -219,7 +235,7 @@
             // 
             this.lblResps.AutoSize = true;
             this.lblResps.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblResps.Location = new System.Drawing.Point(682, 32);
+            this.lblResps.Location = new System.Drawing.Point(898, 32);
             this.lblResps.Name = "lblResps";
             this.lblResps.Size = new System.Drawing.Size(137, 16);
             this.lblResps.TabIndex = 18;
@@ -243,18 +259,6 @@
             this.label2.Size = new System.Drawing.Size(47, 16);
             this.label2.TabIndex = 20;
             this.label2.Text = "Survey";
-            // 
-            // cmdMeanTimes
-            // 
-            this.cmdMeanTimes.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmdMeanTimes.Location = new System.Drawing.Point(1295, 41);
-            this.cmdMeanTimes.Name = "cmdMeanTimes";
-            this.cmdMeanTimes.Size = new System.Drawing.Size(101, 23);
-            this.cmdMeanTimes.TabIndex = 22;
-            this.cmdMeanTimes.Text = "MeanTimes";
-            this.cmdMeanTimes.UseVisualStyleBackColor = true;
-            this.cmdMeanTimes.Visible = false;
-            this.cmdMeanTimes.Click += new System.EventHandler(this.cmdMeanTimes_Click);
             // 
             // cboUserType
             // 
@@ -284,10 +288,11 @@
             this.weightsToolStripMenuItem1,
             this.viewToolStripMenuItem,
             this.reportToolStripMenuItem,
-            this.sASSyntaxToolStripMenuItem});
+            this.sASSyntaxToolStripMenuItem,
+            this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1505, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1559, 24);
             this.menuStrip1.TabIndex = 25;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -431,6 +436,47 @@
             this.generateResponseFreqCodeToolStripMenuItem.Text = "Generate Response Freq Code";
             this.generateResponseFreqCodeToolStripMenuItem.Click += new System.EventHandler(this.generateResponseFreqCodeToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.includeNotesToolStripMenuItem,
+            this.customListToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // includeNotesToolStripMenuItem
+            // 
+            this.includeNotesToolStripMenuItem.CheckOnClick = true;
+            this.includeNotesToolStripMenuItem.Name = "includeNotesToolStripMenuItem";
+            this.includeNotesToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.includeNotesToolStripMenuItem.Text = "Include Interviewer Notes";
+            this.includeNotesToolStripMenuItem.Click += new System.EventHandler(this.includeNotesToolStripMenuItem_Click);
+            // 
+            // customListToolStripMenuItem
+            // 
+            this.customListToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.excludeToolStripMenuItem,
+            this.limitToToolStripMenuItem});
+            this.customListToolStripMenuItem.Name = "customListToolStripMenuItem";
+            this.customListToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.customListToolStripMenuItem.Text = "Custom List";
+            // 
+            // excludeToolStripMenuItem
+            // 
+            this.excludeToolStripMenuItem.CheckOnClick = true;
+            this.excludeToolStripMenuItem.Name = "excludeToolStripMenuItem";
+            this.excludeToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.excludeToolStripMenuItem.Text = "Exclude";
+            this.excludeToolStripMenuItem.Click += new System.EventHandler(this.CustomListOptions_Click);
+            // 
+            // limitToToolStripMenuItem
+            // 
+            this.limitToToolStripMenuItem.CheckOnClick = true;
+            this.limitToToolStripMenuItem.Name = "limitToToolStripMenuItem";
+            this.limitToToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.limitToToolStripMenuItem.Text = "Limit To";
+            // 
             // txtDirectFilters
             // 
             this.txtDirectFilters.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -446,9 +492,9 @@
             this.label4.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(104, 395);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(89, 16);
+            this.label4.Size = new System.Drawing.Size(80, 16);
             this.label4.TabIndex = 27;
-            this.label4.Text = "Directly Filters";
+            this.label4.Text = "Direct Filters";
             // 
             // label5
             // 
@@ -456,9 +502,9 @@
             this.label5.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(311, 395);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(99, 16);
+            this.label5.Size = new System.Drawing.Size(90, 16);
             this.label5.TabIndex = 28;
-            this.label5.Text = "Indirectly Filters";
+            this.label5.Text = "Indirect Filters";
             // 
             // txtIndirectFilters
             // 
@@ -473,7 +519,7 @@
             // 
             this.lblTotalTime.AutoSize = true;
             this.lblTotalTime.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalTime.Location = new System.Drawing.Point(84, 5);
+            this.lblTotalTime.Location = new System.Drawing.Point(305, 5);
             this.lblTotalTime.Name = "lblTotalTime";
             this.lblTotalTime.Size = new System.Drawing.Size(113, 16);
             this.lblTotalTime.TabIndex = 46;
@@ -484,7 +530,7 @@
             this.lstResponses.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstResponses.FormattingEnabled = true;
             this.lstResponses.ItemHeight = 16;
-            this.lstResponses.Location = new System.Drawing.Point(685, 54);
+            this.lstResponses.Location = new System.Drawing.Point(901, 54);
             this.lstResponses.Name = "lstResponses";
             this.lstResponses.Size = new System.Drawing.Size(162, 132);
             this.lstResponses.TabIndex = 47;
@@ -496,7 +542,7 @@
             this.cboGoToVar.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cboGoToVar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cboGoToVar.FormattingEnabled = true;
-            this.cboGoToVar.Location = new System.Drawing.Point(685, 189);
+            this.cboGoToVar.Location = new System.Drawing.Point(686, 245);
             this.cboGoToVar.Name = "cboGoToVar";
             this.cboGoToVar.Size = new System.Drawing.Size(162, 24);
             this.cboGoToVar.TabIndex = 48;
@@ -508,7 +554,7 @@
             this.cboMaxMin.FormattingEnabled = true;
             this.cboMaxMin.Location = new System.Drawing.Point(66, 135);
             this.cboMaxMin.Name = "cboMaxMin";
-            this.cboMaxMin.Size = new System.Drawing.Size(164, 24);
+            this.cboMaxMin.Size = new System.Drawing.Size(165, 24);
             this.cboMaxMin.TabIndex = 50;
             // 
             // label9
@@ -524,12 +570,13 @@
             // cmdShow
             // 
             this.cmdShow.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmdShow.Location = new System.Drawing.Point(66, 189);
+            this.cmdShow.Location = new System.Drawing.Point(1153, 75);
             this.cmdShow.Name = "cmdShow";
-            this.cmdShow.Size = new System.Drawing.Size(75, 23);
+            this.cmdShow.Size = new System.Drawing.Size(62, 23);
             this.cmdShow.TabIndex = 53;
             this.cmdShow.Text = "User Qs";
             this.cmdShow.UseVisualStyleBackColor = true;
+            this.cmdShow.Visible = false;
             this.cmdShow.Click += new System.EventHandler(this.cmdShow_Click);
             // 
             // txtQnum
@@ -539,24 +586,6 @@
             this.txtQnum.Name = "txtQnum";
             this.txtQnum.Size = new System.Drawing.Size(64, 23);
             this.txtQnum.TabIndex = 57;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(23, 164);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(37, 16);
-            this.label7.TabIndex = 61;
-            this.label7.Text = "WPM";
-            // 
-            // txtWPM
-            // 
-            this.txtWPM.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtWPM.Location = new System.Drawing.Point(66, 162);
-            this.txtWPM.Name = "txtWPM";
-            this.txtWPM.Size = new System.Drawing.Size(32, 23);
-            this.txtWPM.TabIndex = 62;
             // 
             // cmdTime
             // 
@@ -569,21 +598,21 @@
             this.cmdTime.UseVisualStyleBackColor = true;
             this.cmdTime.Click += new System.EventHandler(this.cmdTime_Click);
             // 
-            // txtTargetTime
+            // txtKnownTime
             // 
-            this.txtTargetTime.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTargetTime.Location = new System.Drawing.Point(159, 231);
-            this.txtTargetTime.Name = "txtTargetTime";
-            this.txtTargetTime.Size = new System.Drawing.Size(51, 22);
-            this.txtTargetTime.TabIndex = 66;
+            this.txtKnownTime.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtKnownTime.Location = new System.Drawing.Point(54, 82);
+            this.txtKnownTime.Name = "txtKnownTime";
+            this.txtKnownTime.Size = new System.Drawing.Size(51, 22);
+            this.txtKnownTime.TabIndex = 66;
             // 
-            // txtTargetTimeWPM
+            // txtTargetWPM
             // 
-            this.txtTargetTimeWPM.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTargetTimeWPM.Location = new System.Drawing.Point(285, 231);
-            this.txtTargetTimeWPM.Name = "txtTargetTimeWPM";
-            this.txtTargetTimeWPM.Size = new System.Drawing.Size(44, 22);
-            this.txtTargetTimeWPM.TabIndex = 67;
+            this.txtTargetWPM.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTargetWPM.Location = new System.Drawing.Point(168, 82);
+            this.txtTargetWPM.Name = "txtTargetWPM";
+            this.txtTargetWPM.Size = new System.Drawing.Size(44, 22);
+            this.txtTargetWPM.TabIndex = 67;
             // 
             // lstWeightedQuestionList
             // 
@@ -594,13 +623,15 @@
             this.chWeight,
             this.chWeightSource,
             this.chWordCount,
-            this.chTime});
+            this.chTime,
+            this.chUser});
             this.lstWeightedQuestionList.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstWeightedQuestionList.FullRowSelect = true;
             this.lstWeightedQuestionList.HideSelection = false;
-            this.lstWeightedQuestionList.Location = new System.Drawing.Point(19, 216);
+            this.lstWeightedQuestionList.Location = new System.Drawing.Point(20, 275);
             this.lstWeightedQuestionList.Name = "lstWeightedQuestionList";
-            this.lstWeightedQuestionList.Size = new System.Drawing.Size(828, 464);
+            this.lstWeightedQuestionList.Size = new System.Drawing.Size(828, 405);
+            this.lstWeightedQuestionList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lstWeightedQuestionList.TabIndex = 68;
             this.lstWeightedQuestionList.UseCompatibleStateImageBehavior = false;
             this.lstWeightedQuestionList.SelectedIndexChanged += new System.EventHandler(this.lstWeightedQuestionList_SelectedIndexChanged);
@@ -648,7 +679,7 @@
             this.lstUnweightedQuestionList.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstUnweightedQuestionList.FullRowSelect = true;
             this.lstUnweightedQuestionList.HideSelection = false;
-            this.lstUnweightedQuestionList.Location = new System.Drawing.Point(19, 699);
+            this.lstUnweightedQuestionList.Location = new System.Drawing.Point(19, 701);
             this.lstUnweightedQuestionList.Name = "lstUnweightedQuestionList";
             this.lstUnweightedQuestionList.Size = new System.Drawing.Size(828, 203);
             this.lstUnweightedQuestionList.TabIndex = 69;
@@ -685,21 +716,11 @@
             // 
             this.chTime2.Text = "Time";
             // 
-            // lblTotalTime2
-            // 
-            this.lblTotalTime2.AutoSize = true;
-            this.lblTotalTime2.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalTime2.Location = new System.Drawing.Point(84, 109);
-            this.lblTotalTime2.Name = "lblTotalTime2";
-            this.lblTotalTime2.Size = new System.Drawing.Size(123, 16);
-            this.lblTotalTime2.TabIndex = 70;
-            this.lblTotalTime2.Text = "Total Survey Time";
-            // 
             // lblTotalTime3
             // 
             this.lblTotalTime3.AutoSize = true;
             this.lblTotalTime3.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalTime3.Location = new System.Drawing.Point(84, 137);
+            this.lblTotalTime3.Location = new System.Drawing.Point(305, 79);
             this.lblTotalTime3.Name = "lblTotalTime3";
             this.lblTotalTime3.Size = new System.Drawing.Size(113, 16);
             this.lblTotalTime3.TabIndex = 71;
@@ -708,7 +729,7 @@
             // txtStartAt
             // 
             this.txtStartAt.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtStartAt.Location = new System.Drawing.Point(198, 162);
+            this.txtStartAt.Location = new System.Drawing.Point(199, 163);
             this.txtStartAt.Name = "txtStartAt";
             this.txtStartAt.Size = new System.Drawing.Size(32, 23);
             this.txtStartAt.TabIndex = 73;
@@ -717,11 +738,11 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(145, 164);
+            this.label6.Location = new System.Drawing.Point(98, 165);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(52, 16);
+            this.label6.Size = new System.Drawing.Size(95, 16);
             this.label6.TabIndex = 74;
-            this.label6.Text = "Start At";
+            this.label6.Text = "Start Timing At";
             // 
             // txtWeight
             // 
@@ -736,7 +757,7 @@
             this.chkWeightedToggle.AutoSize = true;
             this.chkWeightedToggle.Checked = true;
             this.chkWeightedToggle.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkWeightedToggle.Location = new System.Drawing.Point(37, 30);
+            this.chkWeightedToggle.Location = new System.Drawing.Point(82, 5);
             this.chkWeightedToggle.Name = "chkWeightedToggle";
             this.chkWeightedToggle.Size = new System.Drawing.Size(41, 23);
             this.chkWeightedToggle.TabIndex = 77;
@@ -748,21 +769,21 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(84, 236);
+            this.label8.Location = new System.Drawing.Point(120, 83);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(72, 14);
+            this.label8.Size = new System.Drawing.Size(43, 14);
             this.label8.TabIndex = 78;
-            this.label8.Text = "Target time";
+            this.label8.Text = "min ->";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(216, 236);
+            this.label11.Location = new System.Drawing.Point(218, 84);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(64, 14);
+            this.label11.Size = new System.Drawing.Size(35, 14);
             this.label11.TabIndex = 79;
-            this.label11.Text = "Req. WPM";
+            this.label11.Text = "WPM";
             // 
             // label12
             // 
@@ -790,7 +811,7 @@
             this.panel1.Controls.Add(this.flowLayoutPanel1);
             this.panel1.Controls.Add(this.txtVarName);
             this.panel1.Controls.Add(this.rtbQuestionText);
-            this.panel1.Location = new System.Drawing.Point(853, 295);
+            this.panel1.Location = new System.Drawing.Point(854, 220);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(748, 571);
             this.panel1.TabIndex = 81;
@@ -912,19 +933,80 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.label11);
+            this.panel2.Controls.Add(this.rbKnownTime);
+            this.panel2.Controls.Add(this.rbKnownWPM);
             this.panel2.Controls.Add(this.chkWeightedToggle);
             this.panel2.Controls.Add(this.lblTotalTime3);
-            this.panel2.Controls.Add(this.label8);
-            this.panel2.Controls.Add(this.lblTotalTime2);
+            this.panel2.Controls.Add(this.label14);
             this.panel2.Controls.Add(this.cmdTime);
+            this.panel2.Controls.Add(this.label13);
             this.panel2.Controls.Add(this.lblTotalTime);
-            this.panel2.Controls.Add(this.txtTargetTimeWPM);
             this.panel2.Controls.Add(this.txtTargetTime);
-            this.panel2.Location = new System.Drawing.Point(853, 29);
+            this.panel2.Controls.Add(this.txtKnownWPM);
+            this.panel2.Controls.Add(this.txtKnownTime);
+            this.panel2.Controls.Add(this.label11);
+            this.panel2.Controls.Add(this.txtTargetWPM);
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Location = new System.Drawing.Point(247, 55);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(359, 260);
+            this.panel2.Size = new System.Drawing.Size(601, 157);
             this.panel2.TabIndex = 82;
+            // 
+            // rbKnownTime
+            // 
+            this.rbKnownTime.AutoSize = true;
+            this.rbKnownTime.Location = new System.Drawing.Point(26, 86);
+            this.rbKnownTime.Name = "rbKnownTime";
+            this.rbKnownTime.Size = new System.Drawing.Size(14, 13);
+            this.rbKnownTime.TabIndex = 94;
+            this.rbKnownTime.Tag = "Time";
+            this.rbKnownTime.UseVisualStyleBackColor = true;
+            this.rbKnownTime.CheckedChanged += new System.EventHandler(this.TimingRadioButtons_CheckedChanged);
+            // 
+            // rbKnownWPM
+            // 
+            this.rbKnownWPM.AutoSize = true;
+            this.rbKnownWPM.Location = new System.Drawing.Point(26, 58);
+            this.rbKnownWPM.Name = "rbKnownWPM";
+            this.rbKnownWPM.Size = new System.Drawing.Size(14, 13);
+            this.rbKnownWPM.TabIndex = 93;
+            this.rbKnownWPM.Tag = "WPM";
+            this.rbKnownWPM.UseVisualStyleBackColor = true;
+            this.rbKnownWPM.CheckedChanged += new System.EventHandler(this.TimingRadioButtons_CheckedChanged);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(218, 56);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(26, 14);
+            this.label14.TabIndex = 92;
+            this.label14.Text = "min";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(111, 59);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(52, 14);
+            this.label13.TabIndex = 91;
+            this.label13.Text = "WPM ->";
+            // 
+            // txtTargetTime
+            // 
+            this.txtTargetTime.Location = new System.Drawing.Point(168, 54);
+            this.txtTargetTime.Name = "txtTargetTime";
+            this.txtTargetTime.Size = new System.Drawing.Size(43, 20);
+            this.txtTargetTime.TabIndex = 90;
+            // 
+            // txtKnownWPM
+            // 
+            this.txtKnownWPM.Location = new System.Drawing.Point(54, 54);
+            this.txtKnownWPM.Name = "txtKnownWPM";
+            this.txtKnownWPM.Size = new System.Drawing.Size(51, 20);
+            this.txtKnownWPM.TabIndex = 89;
             // 
             // txtTimingTitle
             // 
@@ -962,7 +1044,7 @@
             // lblMissingWeights
             // 
             this.lblMissingWeights.AutoSize = true;
-            this.lblMissingWeights.Location = new System.Drawing.Point(16, 683);
+            this.lblMissingWeights.Location = new System.Drawing.Point(16, 685);
             this.lblMissingWeights.Name = "lblMissingWeights";
             this.lblMissingWeights.Size = new System.Drawing.Size(90, 13);
             this.lblMissingWeights.TabIndex = 86;
@@ -971,7 +1053,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(641, 194);
+            this.label10.Location = new System.Drawing.Point(643, 250);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(37, 13);
             this.label10.TabIndex = 87;
@@ -979,19 +1061,95 @@
             // 
             // cmdRefreshLists
             // 
-            this.cmdRefreshLists.Location = new System.Drawing.Point(23, 189);
+            this.cmdRefreshLists.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmdRefreshLists.Location = new System.Drawing.Point(26, 200);
             this.cmdRefreshLists.Name = "cmdRefreshLists";
-            this.cmdRefreshLists.Size = new System.Drawing.Size(37, 23);
+            this.cmdRefreshLists.Size = new System.Drawing.Size(66, 23);
             this.cmdRefreshLists.TabIndex = 88;
-            this.cmdRefreshLists.Text = "R";
+            this.cmdRefreshLists.Text = "Refresh";
             this.cmdRefreshLists.UseVisualStyleBackColor = true;
             this.cmdRefreshLists.Click += new System.EventHandler(this.cmdRefreshLists_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(963, 880);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 93;
+            this.textBox1.Visible = false;
+            // 
+            // txtMessages
+            // 
+            this.txtMessages.Location = new System.Drawing.Point(19, 910);
+            this.txtMessages.Multiline = true;
+            this.txtMessages.Name = "txtMessages";
+            this.txtMessages.Size = new System.Drawing.Size(827, 132);
+            this.txtMessages.TabIndex = 94;
+            // 
+            // grpMinMaxFilter
+            // 
+            this.grpMinMaxFilter.Controls.Add(this.rbMaxUserQs);
+            this.grpMinMaxFilter.Controls.Add(this.rbMinUserQs);
+            this.grpMinMaxFilter.Controls.Add(this.rbAllUserQ);
+            this.grpMinMaxFilter.Location = new System.Drawing.Point(20, 229);
+            this.grpMinMaxFilter.Name = "grpMinMaxFilter";
+            this.grpMinMaxFilter.Size = new System.Drawing.Size(125, 40);
+            this.grpMinMaxFilter.TabIndex = 95;
+            this.grpMinMaxFilter.TabStop = false;
+            // 
+            // rbMaxUserQs
+            // 
+            this.rbMaxUserQs.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rbMaxUserQs.AutoSize = true;
+            this.rbMaxUserQs.Location = new System.Drawing.Point(80, 11);
+            this.rbMaxUserQs.Name = "rbMaxUserQs";
+            this.rbMaxUserQs.Size = new System.Drawing.Size(37, 23);
+            this.rbMaxUserQs.TabIndex = 2;
+            this.rbMaxUserQs.TabStop = true;
+            this.rbMaxUserQs.Tag = "Max";
+            this.rbMaxUserQs.Text = "Max";
+            this.rbMaxUserQs.UseVisualStyleBackColor = true;
+            // 
+            // rbMinUserQs
+            // 
+            this.rbMinUserQs.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rbMinUserQs.AutoSize = true;
+            this.rbMinUserQs.Location = new System.Drawing.Point(40, 10);
+            this.rbMinUserQs.Name = "rbMinUserQs";
+            this.rbMinUserQs.Size = new System.Drawing.Size(34, 23);
+            this.rbMinUserQs.TabIndex = 1;
+            this.rbMinUserQs.TabStop = true;
+            this.rbMinUserQs.Tag = "Min";
+            this.rbMinUserQs.Text = "Min";
+            this.rbMinUserQs.UseVisualStyleBackColor = true;
+            // 
+            // rbAllUserQ
+            // 
+            this.rbAllUserQ.Appearance = System.Windows.Forms.Appearance.Button;
+            this.rbAllUserQ.AutoSize = true;
+            this.rbAllUserQ.Checked = true;
+            this.rbAllUserQ.Location = new System.Drawing.Point(6, 10);
+            this.rbAllUserQ.Name = "rbAllUserQ";
+            this.rbAllUserQ.Size = new System.Drawing.Size(28, 23);
+            this.rbAllUserQ.TabIndex = 0;
+            this.rbAllUserQ.TabStop = true;
+            this.rbAllUserQ.Tag = "All";
+            this.rbAllUserQ.Text = "All";
+            this.rbAllUserQ.UseVisualStyleBackColor = true;
+            this.rbAllUserQ.CheckedChanged += new System.EventHandler(this.ShowUserQs_CheckedChanged);
+            // 
+            // chUser
+            // 
+            this.chUser.Text = "+/-";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1505, 920);
+            this.ClientSize = new System.Drawing.Size(1559, 1022);
+            this.Controls.Add(this.grpMinMaxFilter);
+            this.Controls.Add(this.txtMessages);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.cmdRefreshLists);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.lblMissingWeights);
@@ -1004,8 +1162,6 @@
             this.Controls.Add(this.txtStartAt);
             this.Controls.Add(this.lstUnweightedQuestionList);
             this.Controls.Add(this.lstWeightedQuestionList);
-            this.Controls.Add(this.txtWPM);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.cmdShow);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.cboMaxMin);
@@ -1013,7 +1169,6 @@
             this.Controls.Add(this.lstResponses);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cboUserType);
-            this.Controls.Add(this.cmdMeanTimes);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lblResps);
@@ -1035,6 +1190,8 @@
             this.bindingNavigator1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.grpMinMaxFilter.ResumeLayout(false);
+            this.grpMinMaxFilter.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1053,7 +1210,6 @@
         private System.Windows.Forms.Label lblResps;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button cmdMeanTimes;
         private System.Windows.Forms.ComboBox cboUserType;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -1071,11 +1227,9 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button cmdShow;
         private System.Windows.Forms.TextBox txtQnum;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox txtWPM;
         private System.Windows.Forms.Button cmdTime;
-        private System.Windows.Forms.TextBox txtTargetTime;
-        private System.Windows.Forms.TextBox txtTargetTimeWPM;
+        private System.Windows.Forms.TextBox txtKnownTime;
+        private System.Windows.Forms.TextBox txtTargetWPM;
         private System.Windows.Forms.ListView lstWeightedQuestionList;
         private System.Windows.Forms.ListView lstUnweightedQuestionList;
         private System.Windows.Forms.ColumnHeader chQnum;
@@ -1088,7 +1242,6 @@
         private System.Windows.Forms.ColumnHeader chVarLabel2;
         private System.Windows.Forms.ColumnHeader chWeight2;
         private System.Windows.Forms.ColumnHeader chWordCount2;
-        private System.Windows.Forms.Label lblTotalTime2;
         private System.Windows.Forms.Label lblTotalTime3;
         private System.Windows.Forms.ToolStripMenuItem weightsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem1;
@@ -1136,6 +1289,24 @@
         private System.Windows.Forms.Button cmdRefreshLists;
         private System.Windows.Forms.ColumnHeader chTime;
         private System.Windows.Forms.ColumnHeader chTime2;
+        private System.Windows.Forms.TextBox txtKnownWPM;
+        private System.Windows.Forms.TextBox txtTargetTime;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtMessages;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem includeNotesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem customListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem excludeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem limitToToolStripMenuItem;
+        private System.Windows.Forms.RadioButton rbKnownTime;
+        private System.Windows.Forms.RadioButton rbKnownWPM;
+        private System.Windows.Forms.GroupBox grpMinMaxFilter;
+        private System.Windows.Forms.RadioButton rbMaxUserQs;
+        private System.Windows.Forms.RadioButton rbMinUserQs;
+        private System.Windows.Forms.RadioButton rbAllUserQ;
+        private System.Windows.Forms.ColumnHeader chUser;
     }
 }
 

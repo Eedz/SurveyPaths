@@ -14,17 +14,25 @@ namespace SurveyPaths
     {
         public string Title { get; set; }
         public string SurveyCode { get; set; }
+
+        public Survey ReferenceSurvey { get; set; } // usually the previous wave
         
-        public Respondent User { get; set; }
+        public Respondent User { get; private set ; }
+        public Respondent MaxUser { get; private set; }
+        public Respondent MinUser { get; private set; }
         public List<LinkedQuestion> Questions { get; set; }
         public List<LinkedQuestion> UserQuestions { get; set; }
+        public List<LinkedQuestion> UserQuestionsMax { get; set; }
+        public List<LinkedQuestion> UserQuestionsMin { get; set; }
         public List<LinkedQuestion> NotInterpreted { get; set; }
 
         public TimingReportType ReportType { get; set; }
         public TimingType TimingPath { get; set; }
         public int WPM { get; set; }
         public double TotalTime { get; set; }
+        public double TotalWeightedTime { get; set; }
         public int StartQ { get; set; } // Qnum value where we will start timing
+        public bool includeNotes { get; set; }
 
         // default constructor
         public SurveyTiming()
@@ -32,14 +40,29 @@ namespace SurveyPaths
             Title = "New Timing Run";
             SurveyCode = "";
             User = new Respondent();
+            MaxUser = new Respondent();
+            MinUser = new Respondent();
             Questions = new List<LinkedQuestion>();
             NotInterpreted = new List<LinkedQuestion>();
             UserQuestions = new List<LinkedQuestion>();
+            UserQuestionsMax = new List<LinkedQuestion>();
+            UserQuestionsMin = new List<LinkedQuestion>();
             ReportType = TimingReportType.Undefined;
             TimingPath = TimingType.Undefined;
             WPM = 150;
             TotalTime = 0;
+            TotalWeightedTime = 0;
             StartQ = 0;
+        }
+
+
+        public int QuestionCount()
+        {
+            if (this.ReportType == TimingReportType.TimingUser)
+                return UserQuestions.Count();
+            else
+                return Questions.Count();
+
         }
 
         public int QuestionIndex (string refVarName)
@@ -67,12 +90,19 @@ namespace SurveyPaths
             return Questions[index];
         }
 
+        public void SetUser(Respondent r)
+        {
+            User = r;
+            MaxUser = GetMaxUser(r);
+            MinUser = GetMinUser(r);
+        }
+
         /// <summary>
         /// Return the total time it would take to read the questions at a specific WPM.
         /// </summary>
         /// <param name="wpm"></param>
         /// <returns>Total time in seconds</returns>
-        public double GetTiming(int wpm)
+        public double GetTiming(int wpm, bool includeNotes)
         {
             double total = 0;
             List<LinkedQuestion> list;
@@ -86,7 +116,7 @@ namespace SurveyPaths
                 if (q.GetQnumValue() >= StartQ) 
                 {
                     
-                    total += q.GetTiming(wpm);
+                    total += q.GetTiming(wpm, includeNotes);
                 }
             }
 
@@ -100,7 +130,7 @@ namespace SurveyPaths
         /// </summary>
         /// <param name="wpm"></param>
         /// <returns>Total time in seconds (weighted)</returns>
-        public double GetWeightedTiming(int wpm)
+        public double GetWeightedTiming(int wpm, bool includeNotes)
         {
             double total = 0;
             List<LinkedQuestion> list;
@@ -116,7 +146,7 @@ namespace SurveyPaths
                     if (q.Weight.Value < 0)
                         total += 0;
                     else 
-                        total += q.GetTiming(wpm) * q.Weight.Value;
+                        total += q.GetTiming(wpm, includeNotes) * q.Weight.Value;
                 }
             }
 
@@ -304,8 +334,8 @@ namespace SurveyPaths
                 {
                     if (!set.Contains(q)) set.Add(q);
                 }
-                else
-                    r.AddSkip(q.VarName.RefVarName);
+                //else
+                   // r.AddSkip(q.VarName.RefVarName);
             }
             return set;
         }
@@ -453,6 +483,10 @@ namespace SurveyPaths
                 {
                     result.AddResponse(lq.VarName.RefVarName, maxResp);
                 }
+                else
+                {
+                    result.AddSkip(lq.VarName.RefVarName);
+                }
             }
 
             return result;
@@ -525,6 +559,10 @@ namespace SurveyPaths
                 if (!string.IsNullOrEmpty(minResp) && UserGetsQuestion(r, lq))
                 {
                     result.AddResponse(lq.VarName.RefVarName, minResp);
+                }
+                else
+                {
+                    result.AddSkip(lq.VarName.RefVarName);
                 }
 
             }
@@ -661,5 +699,14 @@ namespace SurveyPaths
             return hasFilter;
         }
 
+        public List<LinkedQuestion> GetMaxQuestions()
+        {
+            return GetRespondentQuestions(MaxUser);
+        }
+
+        public List<LinkedQuestion> GetMinQuestions()
+        {
+            return GetRespondentQuestions(MinUser);
+        }
     }
 }
