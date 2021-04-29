@@ -48,11 +48,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterScenarioTests.cs" />
     <Compile Include="LinkedQuestionTests.cs" />
     <Compile Include="RespondentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnswerTests.cs" />
     <Compile Include="SurveyTimingTests.cs" />
+    <Compile Include="UserTimingTests.cs" />
     <Compile Include="WPMTests.cs" />
   </ItemGroup>
   <ItemGroup>

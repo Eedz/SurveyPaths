@@ -13,10 +13,10 @@ namespace SurveyPaths
 {
     public partial class EnterResponse : Form
     {
-        LinkedQuestion CurrentQuestion;
+        SurveyQuestion CurrentQuestion;
         BindingSource bs;
         public Answer Response { get; set; }
-        public EnterResponse(List<LinkedQuestion> questions )
+        public EnterResponse(List<SurveyQuestion> questions )
         {
             InitializeComponent();
 
@@ -26,12 +26,13 @@ namespace SurveyPaths
             };
             bs.PositionChanged += Bs_PositionChanged;
             cboVarName.DataSource = questions.Where(x=>!(string.IsNullOrEmpty(x.RespOptions))).ToList();
+            cboVarName.DisplayMember = "VarName.RefVarName";
 
         }
 
         private void Bs_PositionChanged(object sender, EventArgs e)
         {
-            CurrentQuestion = (LinkedQuestion)bs.Current;
+            CurrentQuestion = (SurveyQuestion)bs.Current;
             rtbQuestionText.Rtf = "";
             rtbQuestionText.Rtf = CurrentQuestion.GetQuestionTextRich();
 
@@ -41,12 +42,12 @@ namespace SurveyPaths
         {
             ComboBox ctl = sender as ComboBox;
 
-            LinkedQuestion selected = (LinkedQuestion)ctl.SelectedItem;
+            SurveyQuestion selected = (SurveyQuestion)ctl.SelectedItem;
 
             LoadQuestion(selected);
         }
 
-        private void LoadQuestion(LinkedQuestion lq)
+        private void LoadQuestion(SurveyQuestion lq)
         {
             rtbQuestionText.Rtf = "";
             rtbQuestionText.Rtf = lq.GetQuestionTextRich();
@@ -56,7 +57,7 @@ namespace SurveyPaths
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
-            LinkedQuestion q = (LinkedQuestion)cboVarName.SelectedItem;
+            SurveyQuestion q = (SurveyQuestion)cboVarName.SelectedItem;
             int response = Int32.Parse((string)cboResponse.SelectedItem);
             string responseCode = (string)cboResponse.SelectedItem;
             Response = new Answer(q.VarName.RefVarName, responseCode);

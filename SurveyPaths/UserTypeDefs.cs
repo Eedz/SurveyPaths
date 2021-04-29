@@ -18,6 +18,322 @@ namespace SurveyPaths
             return r;
         }
 
+        public static Respondent CreateNLD2_UT1()
+        {
+            //  QA561 = 1 - 98 and FR326 = 1 and BR309v = 1 and QA101 = 1.
+         
+            Respondent r = new Respondent();
+            r.Survey = "NLD2";
+            r.Description = "Made quit attempt in 6M and smokes FM";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "1");
+            r.AddResponse("FR326", "1");
+            r.AddResponse("BR309v", "1");
+            r.AddResponse("QA101", "1");
+            r.AddResponse("QA116", "1");
+
+            r.Weight = 0.2523;
+            return r;
+        }
+
+        public static Respondent CreateNLD2_UT2()
+        {
+           
+            Respondent r = new Respondent();
+            r.Survey = "NLD2";
+            r.Description = "Made quit attempt in 6M and smokes RYO";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "1");
+            r.AddResponse("FR326", "2");
+            r.AddResponse("BR309v", "2");
+            r.AddResponse("QA101", "1");
+            r.AddResponse("QA116", "1");
+
+            r.Weight = 0.0882;
+            return r;
+        }
+
+        public static Respondent CreateNLD2_UT3()
+        {
+           
+            Respondent r = new Respondent();
+            r.Survey = "NLD2";
+            r.Description = "No quit attempt in 6M and smokes FM";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "0");
+            r.AddResponse("FR326", "1");
+            r.AddResponse("BR309v", "1");
+            r.AddResponse("QA101", "2");
+            r.AddResponse("QA116", "0");
+
+            r.Weight = 0.4331;
+            return r;
+        }
+
+        public static Respondent CreateNLD2_UT4()
+        {
+
+            Respondent r = new Respondent();
+            r.Survey = "NLD2";
+            r.Description = "No quit attempt in 6M and smokes RYO";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "0");
+            r.AddResponse("FR326", "2");
+            r.AddResponse("BR309v", "2");
+            r.AddResponse("QA101", "2");
+            r.AddResponse("QA116", "0");
+
+            r.Weight = 0.2264;
+            return r;
+        }
+
+        public static Respondent CreateJP3_SH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP3";
+            r.Description = "Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR143v", "1");
+            r.AddResponse("QA439", "1");
+
+            r.AddResponse("FR309v", "1");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+
+            r.AddResponse("HN309v", "1");
+
+            r.Weight = 0.333; // 5 types
+            //r.Weight = 0.363;
+
+            return r; 
+        }
+
+        public static Respondent CreateJP3_SNH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP3";
+            r.Description = "Smoker Never Used HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR143v", "1");
+            r.AddResponse("QA439", "1");
+            r.AddResponse("FR309v", "1");
+
+            r.AddResponse("HN106", "2");
+            r.AddResponse("HN309v", "6");
+            r.Weight = 0.338; // 5 types
+           // r.Weight = 0.373;
+
+            return r;
+        }
+
+        public static Respondent CreateJP3_XSH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP3";
+            r.Description = "Ex-Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "5");
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR143v", "1");
+            r.AddResponse("QA439", "1");
+            r.AddResponse("FR309v", "4");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+            r.AddResponse("HN309v", "1");
+            r.Weight = 0.106; // 5 types
+            //r.Weight = 0.116;
+            return r;
+        }
+
+        public static Respondent CreateJP3_NSH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP3";
+            r.Description = "Never Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "6");
+            r.AddResponse("FR143v", "2");
+            r.AddResponse("FR309v", "9");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+            r.AddResponse("HN309v", "1");
+
+            r.Weight = 0.139; // 5 types
+           // r.Weight = 0.153;
+
+            return r;
+        }
+
+        public static Respondent CreateJP3_NSNH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP3";
+            r.Description = "Never Smoker Never HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "6");
+            r.AddResponse("FR143v", "2");
+            r.AddResponse("FR309v", "9");
+
+            r.AddResponse("HN106", "3");
+            r.AddResponse("HN309v", "7");
+
+            r.Weight = 0.084; // 5 types
+
+            return r;
+        }
+
+        public static Respondent CreateJP2_SH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP2";
+            r.Description = "Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("BI345", "1");
+            
+            r.AddResponse("QA439", "1");
+
+            r.AddResponse("FR309v", "1");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+
+            r.AddResponse("HN309v", "1");
+
+            r.Weight = 0.333; // 5 types
+            //r.Weight = 0.363;
+
+            return r;
+        }
+
+        public static Respondent CreateJP2_SNH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP2";
+            r.Description = "Smoker Never Used HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("BI345", "1");
+           
+            r.AddResponse("QA439", "1");
+            r.AddResponse("FR309v", "1");
+
+            r.AddResponse("HN106", "2");
+            r.AddResponse("HN309v", "7");
+            r.Weight = 0.338; // 5 types
+                              // r.Weight = 0.373;
+
+            return r;
+        }
+
+        public static Respondent CreateJP2_XSH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP2";
+            r.Description = "Ex-Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "5");
+            r.AddResponse("BI345", "1");
+          
+            r.AddResponse("QA439", "1");
+            r.AddResponse("FR309v", "4");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+            r.AddResponse("HN309v", "1");
+            r.Weight = 0.106; // 5 types
+            //r.Weight = 0.116;
+            return r;
+        }
+
+        public static Respondent CreateJP2_NSH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP2";
+            r.Description = "Never Smoker Current HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "6");
+          
+            r.AddResponse("FR309v", "9");
+
+            r.AddResponse("HN106", "1");
+            r.AddResponse("HN195", "1");
+            r.AddResponse("HN140", "1");
+            r.AddResponse("HN309v", "1");
+
+            r.Weight = 0.139; // 5 types
+                              // r.Weight = 0.153;
+
+            return r;
+        }
+
+        public static Respondent CreateJP2_NSNH_User()
+        {
+            Respondent r = new Respondent();
+            r.Survey = "JP2";
+            r.Description = "Never Smoker Never HTP User";
+
+            r.AddResponse("BI270", "1");
+            r.AddResponse("BI181", "1");
+            r.AddResponse("FR225", "6");
+           
+            r.AddResponse("FR309v", "9");
+
+            r.AddResponse("HN106", "3");
+            r.AddResponse("HN309v", "7");
+
+            r.Weight = 0.084; // 5 types
+
+            return r;
+        }
+
+
         public static Respondent CreateKRA1TripleUser()
         {
             Respondent r = new Respondent();
@@ -115,6 +431,8 @@ namespace SurveyPaths
             return r;
         }
 
+        //CurrentTiming.StartQ = 53;//es2.5
+            //CurrentTiming.StartQ = 65;//es2.5
         public static Respondent CreateESUT1()
         {
             Respondent r = new Respondent();
@@ -363,7 +681,7 @@ namespace SurveyPaths
             r.AddResponse("NC309", "1");
             r.AddResponse("NC304", "1");
             r.AddResponse("EC309v", "1"); // daily vaper
-
+            r.Weight = 0.5;
             return r;
         }
 
