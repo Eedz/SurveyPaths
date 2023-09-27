@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ITCLib;
+using ITCReportLib;
 using System.IO;
 using System.Xml;
 
@@ -15,7 +16,7 @@ namespace SurveyPaths
 {
     public partial class SavedRunList : Form
     {
-        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing";
+        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing";
 
         List<Timing> SavedRuns;
 
@@ -23,7 +24,7 @@ namespace SurveyPaths
         {
             InitializeComponent();
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo();
             cboSurvey.SelectedItem = null;
             cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;
 
@@ -38,8 +39,9 @@ namespace SurveyPaths
 
             string surveyCode = (string)cboSurvey.SelectedItem;
             string savedRunFolder;
+            listView1.Items.Clear();
             savedRunFolder = GetFilePath(surveyCode) + "\\Method 2";
-            GetSavedRuns(savedRunFolder);
+            GetSavedMethod2Runs(savedRunFolder);
             savedRunFolder = GetFilePath(surveyCode) + "\\Method 3\\Saved Timing Runs";
             GetSavedRuns(savedRunFolder);
 
@@ -76,12 +78,6 @@ namespace SurveyPaths
                     SavedRuns.Add(timing);
                     lvi = new ListViewItem(new string[] { timing.Title, "Method 3" });
                 }
-                else if (scheme.Equals("TimingUser"))
-                {
-                    UserTiming timing = new UserTiming(File.ReadAllText(f));
-                    SavedRuns.Add(timing);
-                    lvi = new ListViewItem(new string[] { timing.Title, "Method 2" });
-                }
                 else
                 {
                     continue;
@@ -92,12 +88,29 @@ namespace SurveyPaths
             }
         }
 
-
-        private void CompareTimingRuns(UserTiming time1, UserTiming time2)
+        private void GetSavedMethod2Runs(string savedRunFolder)
         {
+            string[] folders;
+            if (Directory.Exists(savedRunFolder))
+            {
+                folders = Directory.GetDirectories(savedRunFolder);
+            }
+            else
+            {
+                MessageBox.Show("Directory " + savedRunFolder + " not found.");
+                return;
+            }
 
-            // for each run compare each user
+            foreach(string folder in folders)
+            {
+                ListViewItem lvi = new ListViewItem(new string[] { folder.Substring(folder.LastIndexOf("\\") + 1), "Method 2" });
+                listView1.Items.Add(lvi);
+            }
+
         }
+
+
+        
 
         private void CompareTimingRuns(SurveyTiming time1, SurveyTiming time2)
         {
@@ -196,7 +209,7 @@ namespace SurveyPaths
         {
             SurveyReport SR = new SurveyReport();
             SR.Surveys.Add(new ReportSurvey("Survey Timing Method 3 Comparison"));
-            SR.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Reports\\ISR\\";
+            SR.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Reports\\ISR\\";
 
             SR.ReportTable = dt;
             SR.OutputReportTableXML(customFileName);
@@ -237,40 +250,116 @@ namespace SurveyPaths
 
             if (time1 is SurveyTiming && time2 is SurveyTiming)
                 CompareTimingRuns(time1 as SurveyTiming, time2 as SurveyTiming);
-            else if (time1 is UserTiming && time2 is UserTiming)
-                CompareTimingRuns(time1 as UserTiming, time2 as UserTiming);
+            else if (time1 is string && time2 is string)
+            {
+                // get list of user timings from selected folders
+                List<UserTiming> timing1 = new List<UserTiming>();
+                List<UserTiming> timing2 = new List<UserTiming>();
+
+                var files = Directory.GetFiles(time1 as string, "*.xml");
+
+                foreach (string f in files)
+                {
+                    timing1.Add(new UserTiming(File.ReadAllText(f)));
+                }
+
+                var files2 = Directory.GetFiles(time2 as string, "*.xml");
+
+                foreach (string f in files2)
+                {
+                    timing2.Add(new UserTiming(File.ReadAllText(f)));
+                }
+
+                foreach (UserTiming ut in timing1)
+                {
+                    foreach (UserTiming ut2 in timing2) {
+                        if (ut.User.Description.Equals(ut2.User.Description))
+                        {
+                            CompareTimingRuns(ut, ut2);
+                            break;
+                        }
+                    }
+                }
+                // compare
+                
+            }
+
         }
 
-        
+
+        private void CompareTimingRuns(UserTiming time1, UserTiming time2)
+        {
+
+            
+            // compare the vars and word counts
+
+            
+
+
+            DataTable dt = new DataTable();
+
+            string description1 = time1.User.Description;
+            string description2 = time2.User.Description;
+
+            dt.Columns.Add(new DataColumn(description1 + " VarName"));
+            dt.Columns.Add(new DataColumn(description1 + " Word Count"));
+            dt.Columns.Add(new DataColumn(description1 + " Min/Max"));
+
+            dt.Columns.Add(new DataColumn(description2 + " VarName"));
+            dt.Columns.Add(new DataColumn(description2 + " Word Count"));
+            dt.Columns.Add(new DataColumn(description1 + " Min/Max"));
+
+
+
+            foreach (LinkedQuestion q in time1.UserQuestions)
+            {
+
+                DataRow r = dt.NewRow();
+                int words1 = q.WordCount(time1.SmartWordCount, time1.IncludeNotes);
+                r[description1 + " VarName"] = q.VarName.RefVarName;
+                r[description1 + " Word Count"] = words1;
+                string path1 = time1.WhichPath(q);
+                r[description1 + " Min/Max"] = path1;
+
+                var match = time2.Questions.FirstOrDefault(x => x.VarName.RefVarName.Equals(q.VarName.RefVarName));
+                if (match != null)
+                {
+                    r[description2 + " VarName"] = match.VarName.RefVarName;
+                    int words2 = match.WordCount(time2.SmartWordCount, time2.IncludeNotes);
+                    if (words2 != words1)
+                        r[description2 + " Word Count"] = "[brightgreen]" + words2 + "[/brightgreen]";
+                    else
+                        r[description2 + " Word Count"] = words2;
+
+                    string path2 = time2.WhichPath(q);
+                    if (path2 != path1)
+                        r[description2 + " Min/Max"] = "[brightgreen]" + path2 + "[/brightgreen]";
+                    else
+                        r[description2 + " Min/Max"] = path2;
+                }
+
+                dt.Rows.Add(r);
+
+            }
+
+            List<LinkedQuestion> time2Only = time2.Questions.Except(time1.Questions, new LinkedQuestionComparer()).ToList();
+
+            foreach (LinkedQuestion q in time2Only)
+            {
+                DataRow r = dt.NewRow();
+                r[description2 + " VarName"] = q.VarName.RefVarName;
+                r[description2 + " Word Count"] = q.WordCount(time2.SmartWordCount, time2.IncludeNotes);
+                r[description2 + " Min/Max"] = time2.WhichPath(q);
+                dt.Rows.Add(r);
+            }
+
+            OutputReport(dt, time1.Title + "(" + time1.User.Description + ")" + " vs. " + time2.Title + "(" + time2.User.Description + ")");
+
+        }
 
         private void comparisonToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //CompareUsers frm = new CompareUsers(RespondentList);
 
-            //frm.ShowDialog();
-
-            //Respondent usertype1, usertype2;
-            //TimingType path1, path2;
-
-            //if (frm.DialogResult == DialogResult.OK)
-            //{
-            //    usertype1 = frm.user1;
-            //    usertype2 = frm.user2;
-
-            //    path1 = frm.user1Path;
-            //    path2 = frm.user2Path;
-
-            //}
-            //else
-            //{
-            //    return;
-            //}
-
-            // compare USER type 1's list of questions with USERTYPE2
-
-
-
-       
             //List<LinkedQuestion> tripleList = CurrentTiming.GetRespondentQuestions(usertype1);
 
         
@@ -288,12 +377,12 @@ namespace SurveyPaths
 
             //foreach (LinkedQuestion q in tripleList)
             //{
-            //    q.VarName.FullVarName = Utilities.RemoveHighlightTags(q.VarName.FullVarName);
+            //    q.VarName.VarName = Utilities.RemoveHighlightTags(q.VarName.VarName);
 
             //    SurveyQuestion newQ = new SurveyQuestion();
 
             //    newQ.SurveyCode = q.SurveyCode;
-            //    newQ.VarName.FullVarName = q.VarName.FullVarName;
+            //    newQ.VarName.VarName = q.VarName.VarName;
             //    newQ.VarName.RefVarName = q.VarName.RefVarName;
             //    newQ.Qnum = q.Qnum;
             //    newQ.PreP = q.PreP;
@@ -317,12 +406,12 @@ namespace SurveyPaths
             //foreach (LinkedQuestion q in cigHTPList)
             //{
 
-            //    q.VarName.FullVarName = Utilities.RemoveHighlightTags(q.VarName.FullVarName);
+            //    q.VarName.VarName = Utilities.RemoveHighlightTags(q.VarName.VarName);
 
             //    SurveyQuestion newQ = new SurveyQuestion();
 
             //    newQ.SurveyCode = q.SurveyCode;
-            //    newQ.VarName.FullVarName = q.VarName.FullVarName;
+            //    newQ.VarName.VarName = q.VarName.VarName;
             //    newQ.VarName.RefVarName = q.VarName.RefVarName;
             //    newQ.Qnum = q.Qnum;
             //    newQ.PreP = q.PreP;
@@ -361,7 +450,7 @@ namespace SurveyPaths
             //        SurveyQuestion newQ = new SurveyQuestion();
 
             //        newQ.SurveyCode = skipped.SurveyCode;
-            //        newQ.VarName.FullVarName = skipped.VarName.FullVarName;
+            //        newQ.VarName.VarName = skipped.VarName.VarName;
             //        newQ.VarName.RefVarName = skipped.VarName.RefVarName;
             //        newQ.Qnum = skipped.Qnum;
             //        newQ.PreP = skipped.PreP;
@@ -392,7 +481,7 @@ namespace SurveyPaths
             //        SurveyQuestion newQ = new SurveyQuestion();
 
             //        newQ.SurveyCode = skipped.SurveyCode;
-            //        newQ.VarName.FullVarName = skipped.VarName.FullVarName;
+            //        newQ.VarName.VarName = skipped.VarName.VarName;
             //        newQ.VarName.RefVarName = skipped.VarName.RefVarName;
             //        newQ.Qnum = skipped.Qnum;
             //        newQ.PreP = skipped.PreP;
@@ -419,7 +508,7 @@ namespace SurveyPaths
 
             SurveyReport SR = new SurveyReport();
 
-            SR.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Reports\\ISR\\";
+            SR.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Reports\\ISR\\";
             string customFileName = filename;
 
             SR.AddSurvey(s1);

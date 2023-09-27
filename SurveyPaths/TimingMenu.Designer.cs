@@ -1,6 +1,6 @@
 ﻿namespace SurveyPaths
 {
-    partial class frmTiming
+    partial class TimingMenu
     {
         /// <summary>
         /// Required designer variable.
@@ -34,20 +34,21 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.method2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.method3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTimingRunToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.lstDefinition = new System.Windows.Forms.ListBox();
             this.dgvUserTypes = new System.Windows.Forms.DataGridView();
             this.cmdNewUserType = new System.Windows.Forms.Button();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.method2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.method3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmdAll = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUserTypes)).BeginInit();
             this.SuspendLayout();
             // 
             // cboSurvey
             // 
-            this.cboSurvey.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboSurvey.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cboSurvey.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cboSurvey.FormattingEnabled = true;
             this.cboSurvey.Location = new System.Drawing.Point(56, 42);
@@ -58,6 +59,7 @@
             // 
             // cboScheme
             // 
+            this.cboScheme.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cboScheme.FormattingEnabled = true;
             this.cboScheme.Location = new System.Drawing.Point(56, 72);
             this.cboScheme.Name = "cboScheme";
@@ -104,6 +106,29 @@
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.method2ToolStripMenuItem,
+            this.method3ToolStripMenuItem});
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
+            this.loadToolStripMenuItem.Text = "Load";
+            // 
+            // method2ToolStripMenuItem
+            // 
+            this.method2ToolStripMenuItem.Name = "method2ToolStripMenuItem";
+            this.method2ToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.method2ToolStripMenuItem.Text = "Method 2";
+            this.method2ToolStripMenuItem.Click += new System.EventHandler(this.method2ToolStripMenuItem_Click);
+            // 
+            // method3ToolStripMenuItem
+            // 
+            this.method3ToolStripMenuItem.Name = "method3ToolStripMenuItem";
+            this.method3ToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.method3ToolStripMenuItem.Text = "Method 3";
+            this.method3ToolStripMenuItem.Click += new System.EventHandler(this.method3ToolStripMenuItem_Click);
+            // 
             // loadTimingRunToolStripMenuItem1
             // 
             this.loadTimingRunToolStripMenuItem1.Name = "loadTimingRunToolStripMenuItem1";
@@ -148,34 +173,23 @@
             this.cmdNewUserType.Visible = false;
             this.cmdNewUserType.Click += new System.EventHandler(this.cmdNewUserType_Click);
             // 
-            // loadToolStripMenuItem
+            // cmdAll
             // 
-            this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.method2ToolStripMenuItem,
-            this.method3ToolStripMenuItem});
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
-            this.loadToolStripMenuItem.Text = "Load";
-            // 
-            // method2ToolStripMenuItem
-            // 
-            this.method2ToolStripMenuItem.Name = "method2ToolStripMenuItem";
-            this.method2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.method2ToolStripMenuItem.Text = "Method 2";
-            this.method2ToolStripMenuItem.Click += new System.EventHandler(this.method2ToolStripMenuItem_Click);
-            // 
-            // method3ToolStripMenuItem
-            // 
-            this.method3ToolStripMenuItem.Name = "method3ToolStripMenuItem";
-            this.method3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.method3ToolStripMenuItem.Text = "Method 3";
-            this.method3ToolStripMenuItem.Click += new System.EventHandler(this.method3ToolStripMenuItem_Click);
+            this.cmdAll.Location = new System.Drawing.Point(12, 99);
+            this.cmdAll.Name = "cmdAll";
+            this.cmdAll.Size = new System.Drawing.Size(37, 22);
+            this.cmdAll.TabIndex = 9;
+            this.cmdAll.Text = "All";
+            this.cmdAll.UseVisualStyleBackColor = true;
+            this.cmdAll.Visible = false;
+            this.cmdAll.Click += new System.EventHandler(this.cmdAll_Click);
             // 
             // frmTiming
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 312);
+            this.Controls.Add(this.cmdAll);
             this.Controls.Add(this.cmdNewUserType);
             this.Controls.Add(this.dgvUserTypes);
             this.Controls.Add(this.lstDefinition);
@@ -211,5 +225,6 @@
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem method2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem method3ToolStripMenuItem;
+        private System.Windows.Forms.Button cmdAll;
     }
 }

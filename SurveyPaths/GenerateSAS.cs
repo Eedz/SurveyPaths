@@ -20,7 +20,7 @@ namespace SurveyPaths
            
             cboSurvey.DisplayMember = "SurveyCode";
             cboSurvey.ValueMember = "SID";
-            cboSurvey.DataSource = DBAction.GetAllSurveys();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo();
 
             
         }

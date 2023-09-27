@@ -1,6 +1,6 @@
 ﻿namespace SurveyPaths
 {
-    partial class frmFindFilter
+    partial class FindFilter
     {
         /// <summary>
         /// Required designer variable.

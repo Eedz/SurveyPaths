@@ -10,8 +10,7 @@ namespace SurveyPaths
 {
     public class UserTiming : Timing 
     {
-        //public List<Respondent> UserTypes { get; set; } // should we have a list of users or just have 1 at a time
-
+ 
         public Respondent User { get; private set; }
         public Respondent MaxUser { get; private set; }
         public Respondent MinUser { get; private set; }
@@ -72,7 +71,7 @@ namespace SurveyPaths
             {
                 LinkedQuestion lq = new LinkedQuestion();
 
-                lq.VarName.FullVarName = q.Attributes["VarName"].InnerText;
+                lq.VarName.VarName = q.Attributes["VarName"].InnerText;
                 lq.VarName.RefVarName = q.Attributes["refVarName"].InnerText;
                 lq.VarName.VarLabel = q.Attributes["VarLabel"].InnerText;
                 lq.Qnum = q.Attributes["Qnum"].InnerText;
@@ -163,10 +162,10 @@ namespace SurveyPaths
             }
 
             XmlNode minuser = runData.SelectSingleNode("/SurveyTiming/Users/MinUser");
-            MaxUser = new Respondent();
-            MaxUser.Survey = User.Survey;
-            MaxUser.Description = User.Description;
-            MaxUser.Weight = User.Weight;
+            MinUser = new Respondent();
+            MinUser.Survey = User.Survey;
+            MinUser.Description = User.Description;
+            MinUser.Weight = User.Weight;
 
             foreach (XmlNode a in runData.SelectNodes("/SurveyTiming/UserTypes/MinUser/Definition/DefinitionAnswer"))
             {
@@ -312,7 +311,7 @@ namespace SurveyPaths
                 XmlNode varname = timingData.CreateElement("Question");
 
                 XmlAttribute name = timingData.CreateAttribute("VarName");
-                name.Value = q.VarName.FullVarName;
+                name.Value = q.VarName.VarName;
                 varname.Attributes.Append(name);
 
                 XmlAttribute refname = timingData.CreateAttribute("refVarName");
@@ -419,7 +418,7 @@ namespace SurveyPaths
                 XmlNode varname = timingData.CreateElement("MinQuestion");
 
                 XmlAttribute name = timingData.CreateAttribute("VarName");
-                name.Value = q.VarName.FullVarName;
+                name.Value = q.VarName.RefVarName;
                 varname.Attributes.Append(name);
 
                 minquestions.AppendChild(varname);
@@ -434,7 +433,7 @@ namespace SurveyPaths
                 XmlNode varname = timingData.CreateElement("MaxQuestion");
 
                 XmlAttribute name = timingData.CreateAttribute("VarName");
-                name.Value = q.VarName.FullVarName;
+                name.Value = q.VarName.RefVarName;
                 varname.Attributes.Append(name);
 
                 maxquestions.AppendChild(varname);
@@ -680,6 +679,19 @@ namespace SurveyPaths
                 if (result.Responses.Any(x => x.VarName.Equals(lq.VarName.RefVarName)))
                     continue;
 
+                // PU201 special case for NLD1
+                if (lq.VarName.RefVarName.Equals("PU201"))
+                {
+                    if (r.Description.Contains("FM"))
+                    {
+                        result.AddResponse("PU201", "2");
+                    }else if (r.Description.Contains("RYO"))
+                    {
+                        result.AddResponse("PU201", "4");
+                    }
+                    continue;
+                }
+
                 // skip ones that this user doesn't answer
                 if (!UserGetsQuestion(result, lq))
                 {
@@ -765,6 +777,21 @@ namespace SurveyPaths
                     continue;
 
 
+                // PU201 special case for NLD1
+                if (lq.VarName.RefVarName.Equals("PU201"))
+                {
+                    if (r.Description.Contains("FM"))
+                    {
+                        result.AddResponse("PU201", "1");
+                        
+                    }
+                    else if (r.Description.Contains("RYO"))
+                    {
+                        result.AddResponse("PU201", "5");
+                    }
+                    continue;
+                }
+
                 // skip ones that this user doesn't answer
                 if (!UserGetsQuestion(result, lq))
                 {
@@ -840,7 +867,21 @@ namespace SurveyPaths
             return result;
         }
 
-        
+        public string WhichPath(LinkedQuestion lq)
+        {
+            string path = "N/A";
+
+            if (UserQuestionsMax.Contains(lq) && UserQuestionsMin.Contains(lq))
+                path = "+/-";
+            else if (UserQuestionsMax.Contains(lq) && !UserQuestionsMin.Contains(lq))
+                path = "+";
+            else if (UserQuestionsMin.Contains(lq) && !UserQuestionsMax.Contains(lq))
+                path = "-";
+            else
+                path = "N/A";
+
+            return path;
+        }
 
         // 
         // TODO this doesn't take into account <> > <

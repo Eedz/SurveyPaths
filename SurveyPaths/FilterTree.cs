@@ -12,13 +12,13 @@ using ITCLib;
 namespace SurveyPaths
 {
     public enum ViewBy { Filters= 1, Routing}
-    public partial class Form2 : Form
+    public partial class FilterTree : Form
     {
-        public Form2(LinkedQuestion question, ViewBy view )
+        public FilterTree(LinkedQuestion question, ViewBy view )
         {
             InitializeComponent();
 
-            TreeNode root = new TreeNode(question.VarName.FullVarName);
+            TreeNode root = new TreeNode(question.VarName.VarName);
 
             if (view == ViewBy.Routing)
             {
@@ -39,7 +39,7 @@ namespace SurveyPaths
                 
                 if (p.Value != null) {
                     TreeNode t;
-                    t = new TreeNode(p.Key + " - " + p.Value.VarName.FullVarName);
+                    t = new TreeNode(p.Key + " - " + p.Value.VarName.VarName);
                     t.Expand();
                     root.Nodes.Add(t);
                     AddChildren(p.Value, t);
@@ -58,7 +58,7 @@ namespace SurveyPaths
 
                
                     TreeNode t;
-                    t = new TreeNode(p.VarName.FullVarName );
+                    t = new TreeNode(p.VarName.VarName );
                     t.Expand();
                     root.Nodes.Add(t);
                     AddFilters(p, t);

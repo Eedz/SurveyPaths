@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ITCLib;
+using ITCReportLib;
 using System.Text.RegularExpressions;
 using BooleanLogicParser;
 using System.IO;
@@ -22,9 +23,9 @@ namespace SurveyPaths
     public enum TimingType { Undefined, Max, Min }
     
 
-    public partial class frmSurveyTiming : Form
+    public partial class SurveyTimingForm : Form
     {
-        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing";
+        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing";
         SurveyTiming CurrentTiming;
 
         BindingSource bs;
@@ -37,16 +38,21 @@ namespace SurveyPaths
         public bool ExcludeCustomList;
         public bool OnlyCustomList;
 
-        public frmSurveyTiming(string survey)
+        public SurveyTimingForm(string survey)
         {
             InitializeComponent();
+
+            //ToolStripBindableMenuItem smartWordCountMenuItem = new ToolStripBindableMenuItem();
+            //smartWordCountMenuItem.Text = "Smart Word Count";
+            //smartWordCountMenuItem.CheckOnClick = true;
+            //smartWordCountMenuItem.Checked = true;
+            //optionsToolStripMenuItem.DropDownItems.Add(smartWordCountMenuItem);
 
             bs = new BindingSource();
             bsRun = new BindingSource();
             bindingNavigator1.BindingSource = bs;
 
             CustomList = new List<string>();
-            DoCustomList();
 
             CurrentTiming = new SurveyTiming();
             CurrentTiming.SurveyCode = survey;
@@ -58,7 +64,7 @@ namespace SurveyPaths
             // bindings
             bsRun.DataSource = CurrentTiming;
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x=>x.SurveyCode).ToList();
             cboSurvey.SelectedItem = null;
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", bsRun, "SurveyCode"));
           
@@ -66,11 +72,11 @@ namespace SurveyPaths
             txtKnownWPM.DataBindings.Add(new Binding("Text", bsRun, "WPM"));
             txtStartAt.DataBindings.Add(new Binding("Text", bsRun, "StartQ"));
             txtNotes.DataBindings.Add(new Binding("Text", bsRun, "Notes"));
-
+            
             rbKnownWPM.Checked = true;
             
             txtVarName.DataBindings.Clear();
-            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
+            txtVarName.DataBindings.Add("Text", bs, "VarName.VarName");
 
             txtQnum.DataBindings.Clear();
             txtQnum.DataBindings.Add("Text", bs, "Qnum");
@@ -81,14 +87,24 @@ namespace SurveyPaths
             txtWeightSource.DataBindings.Clear();
             txtWeightSource.DataBindings.Add("Text", bs, "Weight.Source");
 
+            //smartWordCountMenuItem.DataBindings.Add("Checked", CurrentTiming, "SmartWordCount");
+            //smartWordCountMenuItem.Checked = true;
+            CurrentTiming.SmartWordCount = true;
             cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;
             bs.CurrentChanged += Bs_CurrentChanged;
         }
 
-        // TODO finishthis 
-        public frmSurveyTiming(SurveyTiming timing)
+        /// <summary>
+        /// Load the form with an empty run, then load the provided run.
+        /// </summary>
+        /// <param name="timing"></param>
+        public SurveyTimingForm(SurveyTiming timing)
         {
             InitializeComponent();
+
+            //ToolStripBindableMenuItem smartWordCountMenuItem = new ToolStripBindableMenuItem();
+           // smartWordCountMenuItem.Text = "Smart Word Count";
+            optionsToolStripMenuItem.DropDownItems.Add(smartWordCountToolStripMenuItem);
 
             loading = true;
             bs = new BindingSource();
@@ -96,19 +112,17 @@ namespace SurveyPaths
             bindingNavigator1.BindingSource = bs;
 
             CustomList = new List<string>();
-            DoCustomList();
 
-            CurrentTiming = timing;
-            
+            CurrentTiming = new SurveyTiming();
 
-            //ChangeSurvey(timing.SurveyCode);
-
-            RefreshCurrentRecord();
+            bs.DataSource = CurrentTiming.Questions;
+            bs.ResetBindings(true);
+            bsRun.ResetBindings(true);
 
             // bindings
             bsRun.DataSource = CurrentTiming;
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
             cboSurvey.SelectedItem = null;
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", bsRun, "SurveyCode"));
 
@@ -116,11 +130,11 @@ namespace SurveyPaths
             txtKnownWPM.DataBindings.Add(new Binding("Text", bsRun, "WPM"));
             txtStartAt.DataBindings.Add(new Binding("Text", bsRun, "StartQ"));
             txtNotes.DataBindings.Add(new Binding("Text", bsRun, "Notes"));
-
+            txtTargetTime.DataBindings.Add(new Binding("Text", bsRun, "TotalWeightedTime"));
             rbKnownWPM.Checked = true;
 
             txtVarName.DataBindings.Clear();
-            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
+            txtVarName.DataBindings.Add("Text", bs, "VarName.VarName");
 
             txtQnum.DataBindings.Clear();
             txtQnum.DataBindings.Add("Text", bs, "Qnum");
@@ -131,9 +145,12 @@ namespace SurveyPaths
             txtWeightSource.DataBindings.Clear();
             txtWeightSource.DataBindings.Add("Text", bs, "Weight.Source");
 
+           // smartWordCountMenuItem.DataBindings.Add("Checked", bs, "SmartWordCount");
+
             cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;
             bs.CurrentChanged += Bs_CurrentChanged;
-            loading = false;
+            LoadRun(timing);
+
         }
 
         private void DoCustomList()
@@ -207,6 +224,7 @@ namespace SurveyPaths
         private void ChangeSurvey(string surveyCode)
         {
             // set the current timing's survey and reference survey, set up question lists
+
             SetSurvey(surveyCode);
 
             bs.DataSource = CurrentTiming.Questions;
@@ -223,7 +241,7 @@ namespace SurveyPaths
         private void SetSurvey(string surveyCode)
         {
             CurrentTiming.SurveyCode = surveyCode;
-            Survey survey = DBAction.GetSurveyInfo(surveyCode);
+            Survey survey = DBAction.GetAllSurveysInfo().Where(x=>x.SurveyCode.Equals(surveyCode)).FirstOrDefault();
 
             SetReferenceSurvey(survey);
 
@@ -269,8 +287,9 @@ namespace SurveyPaths
             else
                 previousWaveCode = survey.SurveyCode;
 
-            CurrentTiming.ReferenceSurvey = DBAction.GetSurveyInfo(previousWaveCode);
-            DBAction.FillQuestions(CurrentTiming.ReferenceSurvey);
+            CurrentTiming.ReferenceSurvey = DBAction.GetAllSurveysInfo().Where(x => x.SurveyCode.Equals(previousWaveCode)).FirstOrDefault();
+            CurrentTiming.ReferenceSurvey.AddQuestions(DBAction.GetSurveyQuestions(CurrentTiming.ReferenceSurvey));
+  
         }
 
         /// <summary>
@@ -292,13 +311,6 @@ namespace SurveyPaths
             int count0 = 0;
             foreach (LinkedQuestion lq in CurrentTiming.Questions)
             {
-                
-                if (lq.PreP.StartsWith("Ask all.") || lq.PreP.Contains("Ask all."))
-                {
-                    lq.Weight.Source = "A";
-                    lq.Weight.Value = 1;
-                    count1++;
-                }
 
                 if (lq.VarName.RefVarName.StartsWith("Z"))
                 {
@@ -306,27 +318,20 @@ namespace SurveyPaths
                     lq.Weight.Source = "A";
                     count0++;
                 }
-
-                if (lq.IsProgramming())
+                else if (lq.PreP.StartsWith("Ask all.") || lq.PreP.Contains("Ask all."))
+                {
+                    lq.Weight.Source = "A";
+                    lq.Weight.Value = 1;
+                    count1++;
+                }
+                else if (lq.IsProgramming() || lq.IsDerived() || lq.IsTermination())
                 {
                     lq.Weight.Value = 0;
                     lq.Weight.Source = "A";
                     count0++;
                 }
 
-                if (lq.IsDerived())
-                {
-                    lq.Weight.Value = 0;
-                    lq.Weight.Source = "A";
-                    count0++;
-                }
-
-                if (lq.IsTermination())
-                {
-                    lq.Weight.Value = 0;
-                    lq.Weight.Source = "A";
-                    count0++;
-                }
+                
 
             }
 
@@ -350,7 +355,8 @@ namespace SurveyPaths
             foreach (LinkedQuestion lq in CurrentTiming.Questions)
             {
 
-                ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source, lq.WordCount().ToString(), lq.GetTiming(CurrentTiming.WPM).ToString() });
+                ListViewItem li = new ListViewItem(new string[] { lq.Qnum, lq.VarName.RefVarName, lq.VarName.VarLabel, lq.Weight.Value.ToString(), lq.Weight.Source,
+                    lq.WordCount().ToString(), (lq.GetTiming(CurrentTiming.WPM, CurrentTiming.SmartWordCount, CurrentTiming.IncludeNotes) * lq.Weight.Value).ToString() });
                 li.Tag = lq;
 
                 if (lq.Weight.Value == -1)
@@ -418,7 +424,7 @@ namespace SurveyPaths
                 saveFileDialog.Filter = "XML documents (*.xml)|*.xml";
                 saveFileDialog.FilterIndex = 2;
                 saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.FileName = CurrentTiming.Title + " (" + DateTime.Now.ToString().Replace(":", ".") + ")";
+                saveFileDialog.FileName = CurrentTiming.SurveyCode + " Method 3 - " + CurrentTiming.Title + " " + DateTime.Now.ToString("dd-MMM-yyyy hh.mm");
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -464,57 +470,48 @@ namespace SurveyPaths
             if (string.IsNullOrEmpty(filePath))
                 return;
 
+            SurveyTiming run = new SurveyTiming(File.ReadAllText(filePath));
+            LoadRun(run);
+        }
+
+        private void LoadRun(SurveyTiming run)
+        {
+
             loading = true;
 
-            CurrentTiming = new SurveyTiming(File.ReadAllText(filePath)); 
+            CurrentTiming = run;
 
             bsRun.DataSource = CurrentTiming;
             bs.DataSource = CurrentTiming.Questions;
-            
-           // bsRun.ResetBindings(true);
+            txtTargetTime.DataBindings.Clear();
+            txtTargetTime.DataBindings.Add(new Binding("Text", bsRun, "TotalWeightedTime"));
+        
             RefreshLists();
-            UpdateTiming();
+            RefreshCurrentRecord();
 
-            loading = false;
+            txtMessages.Text = "Loaded run: " + CurrentTiming.Title;
+            lblTotalTime.Text = "";
+            lblTotalTime3.Text = "";
+
         }
 
         // View
         private void filterTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LinkedQuestion current = (LinkedQuestion)bs.Current;
-            Form2 frm = new Form2(current, ViewBy.Filters);
+            FilterTree frm = new FilterTree(current, ViewBy.Filters);
             frm.Visible = true;
         }
 
         private void routingTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LinkedQuestion current = (LinkedQuestion)bs.Current;
-            Form2 frm = new Form2(current, ViewBy.Routing);
+            FilterTree frm = new FilterTree(current, ViewBy.Routing);
             frm.Visible = true;
         }
 
 
         // Weights
-        private void generateSASCodeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //GenerateSAS frm = new GenerateSAS();
-
-            //frm.ShowDialog();
-
-            //if (frm.DialogResult == DialogResult.OK)
-            //{
-            //    string sas = GenerateSASCodeOverallFreq(frm.Wave.ISO_Code, frm.Wave.WaveCode);
-            //    string filename = CurrentTiming.SurveyCode + "-FrequencyCode.txt";
-            //    File.WriteAllText(filename, sas);
-                
-            //    System.Diagnostics.Process.Start(filename);
-            //}
-
-            
-            
-
-        }
-
         private void importToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
@@ -553,34 +550,6 @@ namespace SurveyPaths
 
         }
 
-        private void assign1ToMissingWeightsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (LinkedQuestion lq in CurrentTiming.Questions)
-            {
-                if (lq.Weight.Value == -1)
-                {
-                    lq.Weight.Value = 1;
-                }
-
-            }
-
-            RefreshLists();
-        }
-
-        private void assign1ToScreeningSectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (LinkedQuestion lq in CurrentTiming.Questions)
-            {
-                if (lq.GetQnumValue() < CurrentTiming.StartQ && !lq.IsDerived())
-                {
-                    lq.Weight.Value = 1;
-                }
-
-            }
-
-            RefreshLists();
-        }
-
         // Reports
         private void currentTimingToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -614,7 +583,7 @@ namespace SurveyPaths
                 return;
             }
 
-            Survey survey = DBAction.GetSurveyInfo(CurrentTiming.SurveyCode);
+            Survey survey = DBAction.GetAllSurveysInfo().Where(x => x.SurveyCode.Equals(CurrentTiming.SurveyCode)).FirstOrDefault();
 
             string sas = GenerateSASCodeResponseFreq(survey, frm.Surv);
             if (string.IsNullOrEmpty(sas))
@@ -662,7 +631,7 @@ namespace SurveyPaths
         {
             Button btn = sender as Button;
             List<LinkedQuestion> list = (List<LinkedQuestion>)bs.DataSource;
-            LinkedQuestion lq = list.Find(x => x.VarName.FullVarName.Equals(btn.Tag.ToString()));
+            LinkedQuestion lq = list.Find(x => x.VarName.VarName.Equals(btn.Tag.ToString()));
             if (lq == null)
                 return;
             bs.Position = list.IndexOf(lq);
@@ -696,9 +665,6 @@ namespace SurveyPaths
 
         private void cmdTime_Click(object sender, EventArgs e)
         {
-            
-            
-            
             UpdateTiming();
 
             RefreshLists();
@@ -708,13 +674,9 @@ namespace SurveyPaths
         {
             if (cboSurvey.SelectedItem != null && !loading)
                 ChangeSurvey((string)cboSurvey.SelectedItem);
+            else if (loading)
+                loading = false;
         }
-
-        
-
-
-
-        
 
         private void cboGoToVar_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -831,7 +793,7 @@ namespace SurveyPaths
                 if (!AllVarsPresent(q.FilteredOn, previousWaveQs))
                     continue;
 
-                s.Append("%filterStat(newVar = " + q.VarName.FullVarName + ", filter = (");
+                s.Append("%filterStat(newVar = " + q.VarName.VarName + ", filter = (");
                 // GET EACH FILTER LIST
                 foreach (List<FilterInstruction> fl in q.FilterList)
                 {
@@ -917,7 +879,7 @@ namespace SurveyPaths
                     double weight = Double.Parse(line.Substring(semicolon + 1, semicolon2 - semicolon - 1));
                     string source = line.Substring(semicolon2 + 1);
 
-                    LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname));
+                    LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname)|| x.VarName.VarName.Equals(varname));
 
                     if (q2 != null && q2.Weight.Source != "A")// do not override automatic weights
                     {
@@ -975,7 +937,9 @@ namespace SurveyPaths
                     if (varname.Equals("VarName"))
                         continue;
 
-                    double weight = double.Parse( row.Elements<TableCell>().Last().GetCellText());
+                    double weight = 0;
+                    if (!double.TryParse(row.Elements<TableCell>().Last().GetCellText(), out weight))
+                        continue;
                     
                     LinkedQuestion q2 = CurrentTiming.Questions.SingleOrDefault(x => x.VarName.RefVarName.Equals(varname));
 
@@ -1018,6 +982,8 @@ namespace SurveyPaths
             dt.Columns.Add(new DataColumn("Qnum"));
             dt.Columns.Add(new DataColumn("VarName"));
             dt.Columns.Add(new DataColumn("VarLabel"));
+            dt.Columns.Add(new DataColumn("Question"));
+            dt.Columns.Add(new DataColumn("Filters"));
             dt.Columns.Add(new DataColumn("Word Count"));
             dt.Columns.Add(new DataColumn("Weight"));
             dt.Columns.Add(new DataColumn("Weight Source"));
@@ -1036,20 +1002,52 @@ namespace SurveyPaths
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
                 r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptions + "\r\n" + lq.NRCodes;
+                r["Question"] = lq.GetQuestionText();
+
+                string filterExpList = "";
+
+                Dictionary<string, string> filterExpressions = new Dictionary<string, string>();
+                foreach (List<FilterInstruction> list in lq.FilterList)
+                {
+                    foreach (FilterInstruction fi in list)
+                    {
+                        LinkedQuestion found = CurrentTiming.QuestionAt(fi.VarName);
+                        if (found == null)
+                            continue;
+                        if (!filterExpressions.ContainsKey(fi.VarName.ToLower()))
+                            filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptions);
+                    }
+
+                }
+
+                foreach (string f in filterExpressions.Values)
+                {
+                    if (filterExpList.Contains(f))
+                        continue;
+
+                    filterExpList += f + "\r\n";
+                }
+
+
+                r["Filters"] = filterExpList;
                 r["Word Count"] = lq.WordCount();
                 
 
                 // timing info
-                double time = lq.GetTiming(CurrentTiming.WPM);
+                double time = lq.GetTiming(CurrentTiming.WPM, CurrentTiming.SmartWordCount, CurrentTiming.IncludeNotes);
                 double weightedTime;
                 double weight = lq.Weight.Value;
+                double words = lq.WordCount();
 
-                wordCount += lq.WordCount();
+
 
                 if (!CurrentTiming.IsForTiming(lq))
                     time = 0;
+                else
+                    wordCount += words;
 
                 totalTime += time;
+                
 
                 if (weight < 0)
                 {
@@ -1074,7 +1072,8 @@ namespace SurveyPaths
 
             total["VarName"] = "Total";
             total["Weighted Time"] = ((double)totalWeightedTime / 60).ToString("N2") + " mins";
-
+            total["Word Count"] = wordCount;
+                
             dt.Rows.Add(total);
 
             DataRow total2 = dt.NewRow();
@@ -1082,6 +1081,7 @@ namespace SurveyPaths
             total2["VarName"] = "Total";
             total2["VarLabel"] = "WPM:" + CurrentTiming.WPM;
             total2["Weighted Time"] = (double)totalWeightedTime / 60 + " mins";
+            total2["Word Count"] = wordCount;
 
             dt.Rows.InsertAt(total2, 0);
 
@@ -1124,6 +1124,8 @@ namespace SurveyPaths
                     foreach (FilterInstruction fi in list)
                     {
                         LinkedQuestion found = CurrentTiming.QuestionAt(fi.VarName);
+                        if (found == null)
+                            continue;
                         if (!filterExpressions.ContainsKey(fi.VarName.ToLower()))
                             filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptions);
                     }
@@ -1153,7 +1155,7 @@ namespace SurveyPaths
             return dt;
         }
 
-        private void OutputReport(DataTable dt, string customFileName, string customLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Reports\\ISR\\")
+        private void OutputReport(DataTable dt, string customFileName, string customLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Reports\\")
         {
             SurveyReport SR = new SurveyReport();
             SR.Surveys.Add(new ReportSurvey(CurrentTiming.SurveyCode));
@@ -1283,7 +1285,7 @@ namespace SurveyPaths
 
         private void findFilterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmFindFilter frm = new frmFindFilter(CurrentTiming.Questions);
+            FindFilter frm = new FindFilter(CurrentTiming.Questions);
             frm.Show();
         }
 

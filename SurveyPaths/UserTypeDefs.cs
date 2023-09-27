@@ -18,6 +18,68 @@ namespace SurveyPaths
             return r;
         }
 
+        public static Respondent CreateNL_FM()
+        {
+
+
+            Respondent r = new Respondent();
+            r.Survey = "NL11-Pw";
+            r.Description = "NL11 FM";
+
+            r.AddResponse("FR326", "1");
+          
+
+            r.Weight = 1;
+            return r;
+        }
+
+        public static Respondent CreateNL_RYO()
+        {
+
+
+            Respondent r = new Respondent();
+            r.Survey = "NL11-Pw";
+            r.Description = "NL11 RYO";
+
+            r.AddResponse("FR326", "2");
+
+
+            r.Weight = 1;
+            return r;
+        }
+
+        public static Respondent Create4CV3_UK_FM()
+        {
+          
+
+            Respondent r = new Respondent();
+            r.Survey = "4CV3";
+            r.Description = "UK FM";
+
+            r.AddResponse("FR330", "1");
+            r.AddResponse("BR227", "1");
+            r.AddResponse("COUNTRY", "3");
+
+            r.Weight = 1;
+            return r;
+        }
+
+        public static Respondent Create4CV3_UK_RYO()
+        {
+
+
+            Respondent r = new Respondent();
+            r.Survey = "4CV3";
+            r.Description = "UK RYO";
+
+            r.AddResponse("FR330", "5");
+            r.AddResponse("BR227", "2");
+            r.AddResponse("COUNTRY", "3");
+
+            r.Weight = 1;
+            return r;
+        }
+
         public static Respondent CreateNLD2_UT1()
         {
             //  QA561 = 1 - 98 and FR326 = 1 and BR309v = 1 and QA101 = 1.
@@ -87,6 +149,91 @@ namespace SurveyPaths
 
             Respondent r = new Respondent();
             r.Survey = "NLD2";
+            r.Description = "No quit attempt in 6M and smokes RYO";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "0");
+            r.AddResponse("FR326", "2");
+            r.AddResponse("BR309v", "2");
+            r.AddResponse("QA101", "2");
+            r.AddResponse("QA116", "0");
+
+            r.Weight = 0.2264;
+            return r;
+        }
+
+        public static Respondent CreateNLD1_UT1()
+        {
+            //  QA561 = 1 - 98 and FR326 = 1 and BR309v = 1 and QA101 = 1.
+
+            Respondent r = new Respondent();
+            r.Survey = "NLD1";
+            r.Description = "Made quit attempt in 6M and smokes FM";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "1");
+            r.AddResponse("FR326", "1");
+            r.AddResponse("BR309v", "1");
+            r.AddResponse("QA101", "1");
+            r.AddResponse("QA116", "1");
+
+            r.Weight = 0.2523;
+            return r;
+        }
+
+        public static Respondent CreateNLD1_UT2()
+        {
+
+            Respondent r = new Respondent();
+            r.Survey = "NLD1";
+            r.Description = "Made quit attempt in 6M and smokes RYO";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "1");
+            r.AddResponse("FR326", "2");
+            r.AddResponse("BR309v", "2");
+            r.AddResponse("QA101", "1");
+            r.AddResponse("QA116", "1");
+
+            r.Weight = 0.0882;
+            return r;
+        }
+
+        public static Respondent CreateNLD1_UT3()
+        {
+
+            Respondent r = new Respondent();
+            r.Survey = "NLD1";
+            r.Description = "No quit attempt in 6M and smokes FM";
+
+            r.AddResponse("BI345", "1");
+            r.AddResponse("FR305", "1");
+            r.AddResponse("FR225", "1");
+            r.AddResponse("FR309v", "1");
+            r.AddResponse("QA561", "0");
+            r.AddResponse("FR326", "1");
+            r.AddResponse("BR309v", "1");
+            r.AddResponse("QA101", "2");
+            r.AddResponse("QA116", "0");
+
+            r.Weight = 0.4331;
+            return r;
+        }
+
+        public static Respondent CreateNLD1_UT4()
+        {
+
+            Respondent r = new Respondent();
+            r.Survey = "NLD1";
             r.Description = "No quit attempt in 6M and smokes RYO";
 
             r.AddResponse("BI345", "1");

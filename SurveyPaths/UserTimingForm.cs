@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ITCLib;
+using ITCReportLib;
 using System.IO;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -18,7 +19,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 namespace SurveyPaths
 {    
 
-    public partial class frmUserTiming : Form
+    public partial class UserTimingForm : Form
     {
         UserTiming CurrentTiming;
         List<UserTiming> UserTimings;
@@ -31,11 +32,11 @@ namespace SurveyPaths
         bool loading = false; // true if we are loading a past run
 
         List<string> CustomList;
-        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing";
+        public string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing";
         public bool ExcludeCustomList;
         public bool OnlyCustomList;
 
-        public frmUserTiming(string survey, List<Respondent> userTypes)
+        public UserTimingForm(string survey, List<Respondent> userTypes)
         {
             InitializeComponent();
 
@@ -60,10 +61,8 @@ namespace SurveyPaths
             // bindings
             bsRun.DataSource = CurrentTiming;
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
             cboSurvey.SelectedItem = null;
-
-
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", bsRun, "SurveyCode"));
 
             txtTimingTitle.DataBindings.Add("Text", bsRun, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -78,7 +77,7 @@ namespace SurveyPaths
             rbKnownWPM.Checked = true;
 
             txtVarName.DataBindings.Clear();
-            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
+            txtVarName.DataBindings.Add("Text", bs, "VarName.VarName");
 
             txtQnum.DataBindings.Clear();
             txtQnum.DataBindings.Add("Text", bs, "Qnum");
@@ -91,7 +90,7 @@ namespace SurveyPaths
         }
 
         // TODO finish this
-        public frmUserTiming(List<UserTiming> userTimings)
+        public UserTimingForm(List<UserTiming> userTimings)
         {
             InitializeComponent();
 
@@ -100,26 +99,22 @@ namespace SurveyPaths
             bindingNavigator1.BindingSource = bs;
 
             CustomList = new List<string>();
-            DoCustomList();
-
-            //RespondentList = userTypes;
+            RespondentList = new List<Respondent>();
+            foreach (UserTiming ut in userTimings)
+            {
+                RespondentList.Add(ut.User);
+            }
 
             CurrentTiming = userTimings[0];
 
-            //CurrentTiming.SurveyCode = survey;
-
             UserTimings = userTimings;
-            //ChangeSurvey(survey);
-
-            RefreshCurrentRecord();
-
+     
             // bindings
             bsRun.DataSource = CurrentTiming;
+            bs.DataSource = CurrentTiming.Questions;
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
             cboSurvey.SelectedItem = null;
-
-
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", bsRun, "SurveyCode"));
 
             txtTimingTitle.DataBindings.Add("Text", bsRun, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -134,7 +129,7 @@ namespace SurveyPaths
             rbKnownWPM.Checked = true;
 
             txtVarName.DataBindings.Clear();
-            txtVarName.DataBindings.Add("Text", bs, "VarName.FullVarName");
+            txtVarName.DataBindings.Add("Text", bs, "VarName.VarName");
 
             txtQnum.DataBindings.Clear();
             txtQnum.DataBindings.Add("Text", bs, "Qnum");
@@ -144,6 +139,8 @@ namespace SurveyPaths
 
             cboSurvey.SelectedIndexChanged += cboSurvey_SelectedIndexChanged;
             bs.CurrentChanged += Bs_CurrentChanged;
+
+            RefreshCurrentRecord();
         }
 
         private void DoCustomList()
@@ -256,7 +253,7 @@ namespace SurveyPaths
         private void SetSurvey(string surveyCode)
         {
 
-            Survey survey = DBAction.GetSurveyInfo(surveyCode);
+            Survey survey = DBAction.GetAllSurveysInfo().Where(x => x.SurveyCode.Equals(surveyCode)).FirstOrDefault();
             var qs = DBAction.GetSurveyQuestions(survey).ToList();
 
             Survey referenceSurvey;
@@ -265,9 +262,18 @@ namespace SurveyPaths
             // set reference survey
             if (wave > 1)
             {
-                string previousWaveCode = survey.SurveyCodePrefix + (wave - 1);
-                referenceSurvey = DBAction.GetSurveyInfo(previousWaveCode);
-                DBAction.FillQuestions(referenceSurvey);
+                string previousWaveCode = "";
+                if (survey.SurveyCode.IndexOf("-") > -1)
+                {
+                    previousWaveCode = survey.SurveyCodePrefix + (wave - 1) + survey.SurveyCode.Substring(survey.SurveyCode.IndexOf("-"));
+                }
+                else
+                {
+                    previousWaveCode = survey.SurveyCodePrefix + (wave - 1);
+                }
+                referenceSurvey = DBAction.GetAllSurveysInfo().Where(x => x.SurveyCode.Equals(previousWaveCode)).FirstOrDefault();
+                if (referenceSurvey != null)
+                    referenceSurvey.AddQuestions(DBAction.GetSurveyQuestions(referenceSurvey));
             }
             else
             {
@@ -462,16 +468,26 @@ namespace SurveyPaths
                 r.TotalMaxTime = Math.Round(ut.GetUserBasedTiming(CurrentTiming.WPM, TimingType.Max), 2);
                 r.TotalMinTime = Math.Round(ut.GetUserBasedTiming(CurrentTiming.WPM, TimingType.Min),2);
 
-                double mean = (r.TotalMaxTime + r.TotalMinTime) / 2;
-                totalWMean += mean * r.Weight;
-                string[] row = new string[] { r.Description, r.TotalMinTime.ToString(), r.TotalMaxTime.ToString(), mean.ToString(), r.Weight.ToString(), (mean * r.Weight).ToString() };
+                int minWC = ut.TotalWordCount(TimingType.Min);
+                int maxWC = ut.TotalWordCount(TimingType.Max);
+                double meanWC = (minWC + maxWC) / 2;
+
+                double mean = Math.Round((r.TotalMaxTime + r.TotalMinTime) / 2, 2);
+
+                totalWMean += Math.Round(mean * r.Weight,2);
+
+                string minCol = r.TotalMinTime + " (mins)" + Environment.NewLine + minWC + " (words)";
+                string maxCol = r.TotalMaxTime + " (mins)" + Environment.NewLine + maxWC + " (words)";
+                string meanCol = mean + " (mins)" + Environment.NewLine + meanWC + " (words)";
+
+                string[] row = new string[] { r.Description, minCol, maxCol, meanCol, r.Weight.ToString(), (mean * r.Weight).ToString() };
                 dataGridView1.Rows.Add(row);
 
             }
 
             dataGridView1.AutoResizeColumns();
 
-            txtTargetTime.Text = Math.Round(totalWMean,2).ToString();
+            txtTargetTime.Text = totalWMean.ToString();
 
             if (!string.IsNullOrEmpty(txtKnownWPM.Text))
             {
@@ -495,7 +511,7 @@ namespace SurveyPaths
                 foreach (RoutingVar rv in qr.RoutingVars)
                 {
                     string s = rv.Varname.Substring(0, rv.Varname.IndexOf("."));
-                    LinkedQuestion next = CurrentTiming.Questions.Find(x => x.VarName.FullVarName.Equals(s));
+                    LinkedQuestion next = CurrentTiming.Questions.Find(x => x.VarName.VarName.Equals(s));
 
                     foreach (int v in rv.ResponseCodes)
                         q.PossibleNext.Add(v, next);
@@ -516,7 +532,7 @@ namespace SurveyPaths
 
                 foreach (string s in routing)
                 {
-                    LinkedQuestion next = CurrentTiming.Questions.Find(x => x.VarName.FullVarName.Equals(s));
+                    LinkedQuestion next = CurrentTiming.Questions.Find(x => x.VarName.VarName.Equals(s));
 
                     q.PossibleNext.Add(i, next);
                     i++;
@@ -551,14 +567,14 @@ namespace SurveyPaths
         private void filterTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LinkedQuestion current = (LinkedQuestion)bs.Current;
-            Form2 frm = new Form2(current, ViewBy.Filters);
+            FilterTree frm = new FilterTree(current, ViewBy.Filters);
             frm.Visible = true;
         }
 
         private void routingTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LinkedQuestion current = (LinkedQuestion)bs.Current;
-            Form2 frm = new Form2(current, ViewBy.Routing);
+            FilterTree frm = new FilterTree(current, ViewBy.Routing);
             frm.Visible = true;
         }
 
@@ -645,7 +661,7 @@ namespace SurveyPaths
         {
             Button btn = sender as Button;
             List<LinkedQuestion> list = (List<LinkedQuestion>)bs.DataSource;
-            LinkedQuestion lq = list.Find(x => x.VarName.FullVarName.Equals(btn.Tag.ToString()));
+            LinkedQuestion lq = list.Find(x => x.VarName.VarName.Equals(btn.Tag.ToString()));
             if (lq == null)
                 return;
             bs.Position = list.IndexOf(lq);
@@ -840,7 +856,7 @@ namespace SurveyPaths
                 if (!AllVarsPresent(q.FilteredOn, previousWaveQs))
                     continue;
 
-                s.Append("%filterStat(newVar = " + q.VarName.FullVarName + ", filter = (");
+                s.Append("%filterStat(newVar = " + q.VarName.VarName + ", filter = (");
                 // GET EACH FILTER LIST
                 foreach (List<FilterInstruction> fl in q.FilterList)
                 {
@@ -931,8 +947,10 @@ namespace SurveyPaths
 
             dt.Columns.Add(new DataColumn("Qnum"));
             dt.Columns.Add(new DataColumn("VarName"));
+            dt.Columns.Add(new DataColumn("Question"));
             dt.Columns.Add(new DataColumn("VarLabel"));
             dt.Columns.Add(new DataColumn("Filter"));
+            dt.Columns.Add(new DataColumn("Words"));
             dt.Columns.Add(new DataColumn("Timing Estimate (secs)"));
             
             foreach (UserTiming ut in UserTimings)
@@ -955,8 +973,9 @@ namespace SurveyPaths
                 // basic info
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
-
+                r["Question"] = lq.GetQuestionText();
                 r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptions + "\r\n" + lq.NRCodes;
+                
                 
 
                 //if heading, move on
@@ -971,6 +990,9 @@ namespace SurveyPaths
                     r["Filter"] = lq.PreP;
                 else
                     r["Filter"] = "";
+
+
+                r["Words"] = lq.WordCount();
 
                 // timing info
 
@@ -1150,7 +1172,7 @@ namespace SurveyPaths
 
         }
 
-        private void OutputReport(DataTable dt, string customFileName, string customLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Reports\\ISR\\")
+        private void OutputReport(DataTable dt, string customFileName, string customLocation = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Reports\\")
         {
 
             SurveyReport SR = new SurveyReport();
@@ -1473,7 +1495,7 @@ namespace SurveyPaths
                 return;
 
             // save the timing run
-            string runFolder = GetFilePath() + "\\" + CurrentTiming.Title + " (" + DateTime.Today.ToString("d") + " " + DateTime.Now.ToString("t").Replace(":", ".") + ")";
+            string runFolder = GetFilePath() + "\\" + CurrentTiming.Title + " " + DateTime.Now.ToShortDateString();
             Directory.CreateDirectory(runFolder);
 
             foreach (UserTiming ut in UserTimings)
@@ -1487,7 +1509,7 @@ namespace SurveyPaths
             string fileName = "";
 
             report = UserBasedTimingReport();
-            fileName = CurrentTiming.SurveyCode + " - Method 2 - " + CurrentTiming.Title;
+            fileName = CurrentTiming.SurveyCode + " Method 2 - " + CurrentTiming.Title;
 
             OutputReport(report, fileName, runFolder + "\\");
 
@@ -1578,7 +1600,7 @@ namespace SurveyPaths
             // frequenct table
             SurveyReport freq = new SurveyReport();
             freq.Surveys.Add(new ReportSurvey("NZL3"));
-            freq.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Reports\\ISR\\";
+            freq.FileName = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Reports\\";
             DataTable dt2 = new DataTable();
 
             dt2.Columns.Add(new DataColumn("Word Count"));
@@ -1656,7 +1678,7 @@ namespace SurveyPaths
 
             txtScenarios.Text = universe; // string.Join(" AND \r\n", distinct);
 
-            lblUniverse.Text = "Ask " + lq.VarName.FullVarName + " if:";
+            lblUniverse.Text = "Ask " + lq.VarName.VarName + " if:";
         }
 
 

@@ -11,11 +11,11 @@ using ITCLib;
 
 namespace SurveyPaths
 {
-    public partial class frmFindFilter : Form
+    public partial class FindFilter : Form
     {
         List<LinkedQuestion> Questions;
 
-        public frmFindFilter(List<LinkedQuestion> sourceList)
+        public FindFilter(List<LinkedQuestion> sourceList)
         {
             InitializeComponent();
             Questions = sourceList;
@@ -24,10 +24,10 @@ namespace SurveyPaths
         private void cmdFindFilter_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtFilter.Text))
-                FindFilter(txtFilter.Text);
+                FindFilters(txtFilter.Text);
         }
 
-        private void FindFilter(string filter)
+        private void FindFilters(string filter)
         {
             var found = Questions.Where(x => x.PreP.Contains(filter));
             if (found.Count() == 0)

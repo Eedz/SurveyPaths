@@ -13,19 +13,19 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SurveyPaths
 {
-    public partial class frmTiming : Form
+    public partial class TimingMenu : Form
     {
-        string folderPath = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing\\User Type Definitions\\";
-        string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing\\";
+        string folderPath = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing\\User Type Definitions\\";
+        string TimingFolder = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing\\";
         List<SelectableRespondent> UserTypes;
 
-        public frmTiming()
+        public TimingMenu()
         {
             InitializeComponent();
 
             UserTypes = new List<SelectableRespondent>();
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();
             cboSurvey.SelectedItem = null;
 
             cboScheme.Items.Add("Method 2 (User Type)");
@@ -68,11 +68,11 @@ namespace SurveyPaths
                         return;
                     }
 
-                    frmUserTiming frm2 = new frmUserTiming(survey, chosenUsers);
+                    UserTimingForm frm2 = new UserTimingForm(survey, chosenUsers);
                     frm2.Show();
                     break;
                 case "Method 3 (Whole Survey)":
-                    frmSurveyTiming frm1 = new frmSurveyTiming(survey);
+                    SurveyTimingForm frm1 = new SurveyTimingForm(survey);
                     frm1.Show();
                     break;
             }
@@ -104,19 +104,27 @@ namespace SurveyPaths
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-           
 
-            var files = Directory.GetFiles(filePath, "*.xml");
-            List<UserTiming> UserTimings = new List<UserTiming>();
- 
-            foreach (string f in files)
-            {
-                UserTimings.Add(new UserTiming(File.ReadAllText(f)));
-            }
+            //try
+            //{
+                var files = Directory.GetFiles(filePath, "*.xml");
+                List<UserTiming> UserTimings = new List<UserTiming>();
 
+                foreach (string f in files)
+                {
+                    UserTimings.Add(new UserTiming(File.ReadAllText(f)));
+                }
+                UserTimingForm frm = new UserTimingForm(UserTimings);
+                frm.Show();
+            //}
+            //catch(Exception ex)
+            //{
+            //    MessageBox.Show("Invalid saved run.");
+            //    return;
+            //}
         }
 
-        // TODO
+
         private void method3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // get path
@@ -143,7 +151,7 @@ namespace SurveyPaths
             try
             {
                 SurveyTiming run = new SurveyTiming(File.ReadAllText(filePath));
-                frmSurveyTiming frm = new frmSurveyTiming(run);
+                SurveyTimingForm frm = new SurveyTimingForm(run);
                 frm.Show();
             }
             catch( Exception ex)
@@ -189,7 +197,7 @@ namespace SurveyPaths
             if (e.ColumnIndex == 2)
             {
                 Respondent r = UserTypes[e.RowIndex];
-                frmEditUserType frm = new frmEditUserType(r);
+                EditUserType frm = new EditUserType(r);
                 frm.ShowDialog();
             }
         }
@@ -224,6 +232,7 @@ namespace SurveyPaths
                 cmdNewUserType.Visible = false;
                 dgvUserTypes.Visible = false;
                 lstDefinition.Visible = false;
+                cmdAll.Visible = false;
                 cmdStartTiming.Top = 101;
                 return;
             }
@@ -232,6 +241,7 @@ namespace SurveyPaths
             cmdNewUserType.Visible = true;
             dgvUserTypes.Visible = true;
             lstDefinition.Visible = true;
+            cmdAll.Visible = true;
         }
 
         private void GetUserTypes(string survey)
@@ -246,6 +256,17 @@ namespace SurveyPaths
 
                 if (r.Survey.Equals(survey))
                     UserTypes.Add(r);
+            }
+
+            dgvUserTypes.DataSource = null;
+            dgvUserTypes.DataSource = UserTypes;
+        }
+
+        private void cmdAll_Click(object sender, EventArgs e)
+        {
+            foreach (SelectableRespondent r in UserTypes)
+            {
+                r.Selected = true;
             }
 
             dgvUserTypes.DataSource = null;
@@ -306,6 +327,16 @@ namespace SurveyPaths
             File.WriteAllText(folderPath + "NLD2 UT3.xml", r.SaveToXML());
             r = UserTypeDefs.CreateNLD2_UT4();
             File.WriteAllText(folderPath + "NLD2 UT4.xml", r.SaveToXML());
+
+            r = UserTypeDefs.Create4CV3_UK_RYO();
+            File.WriteAllText(folderPath + "4CV3 UT1.xml", r.SaveToXML());
+            r = UserTypeDefs.Create4CV3_UK_FM();
+            File.WriteAllText(folderPath + "4CV3 UT2.xml", r.SaveToXML());
+
+            r = UserTypeDefs.CreateNL_RYO();
+            File.WriteAllText(folderPath + "NL11 UT1.xml", r.SaveToXML());
+            r = UserTypeDefs.CreateNL_FM();
+            File.WriteAllText(folderPath + "NL11 UT2.xml", r.SaveToXML());
         }
 
         private void dgvUserTypes_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -335,7 +366,7 @@ namespace SurveyPaths
 
             string selected = (string)cboSurvey.SelectedItem;
 
-            frmEditUserType frm = new frmEditUserType(selected);
+            EditUserType frm = new EditUserType(selected);
 
             frm.ShowDialog();
 

@@ -39,7 +39,7 @@ namespace SurveyPaths
             runData.LoadXml(xmlDoc);
             SurveyCode = runData.SelectSingleNode("/SurveyTiming").Attributes["Survey"].InnerText;
             Title = runData.SelectSingleNode("/SurveyTiming").Attributes["RunTitle"].InnerText;
-            TotalTime = Double.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["Mins"].InnerText) * 60;
+            TotalWeightedTime = Double.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["Mins"].InnerText);
             WPM = Int32.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["WPM"].InnerText);
             StartQ = Int32.Parse(runData.SelectSingleNode("/SurveyTiming/Time").Attributes["StartQ"].InnerText);
             Notes = runData.SelectSingleNode("/SurveyTiming").Attributes["Notes"].InnerText;
@@ -48,7 +48,7 @@ namespace SurveyPaths
             {
                 LinkedQuestion lq = new LinkedQuestion();
 
-                lq.VarName.FullVarName = q.Attributes["VarName"].InnerText;
+                lq.VarName.VarName = q.Attributes["VarName"].InnerText;
                 lq.VarName.RefVarName = q.Attributes["refVarName"].InnerText;
                 lq.VarName.VarLabel = q.Attributes["VarLabel"].InnerText;
                 lq.Qnum = q.Attributes["Qnum"].InnerText;
@@ -141,7 +141,7 @@ namespace SurveyPaths
 
             XmlNode timing = timingData.CreateElement("Time");
             XmlAttribute time = timingData.CreateAttribute("Mins");
-            time.Value = TotalTime.ToString();
+            time.Value = TotalWeightedTime.ToString();
             timing.Attributes.Append(time);
             XmlAttribute wpm = timingData.CreateAttribute("WPM");
             wpm.Value = WPM.ToString();
@@ -162,7 +162,7 @@ namespace SurveyPaths
                 XmlNode varname = timingData.CreateElement("Question");
 
                 XmlAttribute name = timingData.CreateAttribute("VarName");
-                name.Value = q.VarName.FullVarName;
+                name.Value = q.VarName.VarName;
                 varname.Attributes.Append(name);
 
                 XmlAttribute refname = timingData.CreateAttribute("refVarName");

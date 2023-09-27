@@ -12,18 +12,18 @@ using ITCLib;
 
 namespace SurveyPaths
 {
-    public partial class frmEditUserType : Form
+    public partial class EditUserType : Form
     {
-        string folderPath = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\Access\\Survey Timing\\User Type Definitions\\";
+        string folderPath = "\\\\psychfile\\psych$\\psych-lab-gfong\\SMG\\SDI\\Survey Timing\\User Type Definitions\\";
         public Respondent UserType;
 
-        public frmEditUserType()
+        public EditUserType()
         {
             InitializeComponent();
 
             UserType = new Respondent();
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
 
 
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", UserType, "Survey"));
@@ -32,13 +32,13 @@ namespace SurveyPaths
             lstDefinition.DataSource = UserType.Responses;
         }
 
-        public frmEditUserType(Respondent r)
+        public EditUserType(Respondent r)
         {
             InitializeComponent();
 
             UserType = r;
 
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
          
 
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", UserType, "Survey"));
@@ -47,13 +47,13 @@ namespace SurveyPaths
             lstDefinition.DataSource = UserType.Responses;
         }
 
-        public frmEditUserType(string survey)
+        public EditUserType(string survey)
         {
             InitializeComponent();
 
             UserType = new Respondent();
             UserType.Survey = survey;
-            cboSurvey.DataSource = DBAction.GetSurveyList();
+            cboSurvey.DataSource = DBAction.GetAllSurveysInfo().Select(x => x.SurveyCode).ToList();;
 
 
             cboSurvey.DataBindings.Add(new Binding("SelectedItem", UserType, "Survey"));
@@ -74,12 +74,14 @@ namespace SurveyPaths
                 int index = lstDefinition.SelectedIndex;
                 UserType.Responses.RemoveAt(index);
             }
+            lstDefinition.DataSource = null;
+            lstDefinition.DataSource = UserType.Responses;
         }
 
         private void cmdAddResponse_Click(object sender, EventArgs e)
         {
             
-            Survey s = DBAction.GetSurveyInfo(UserType.Survey);
+            Survey s = DBAction.GetAllSurveysInfo().Where(x => x.SurveyCode.Equals(UserType.Survey)).FirstOrDefault();
             List<SurveyQuestion> surveyQuestions = DBAction.GetSurveyQuestions(s).ToList();
             EnterResponse frm = new EnterResponse(surveyQuestions);
 
@@ -89,6 +91,8 @@ namespace SurveyPaths
             {
                 UserType.Responses.Add(frm.Response);
             }
+            lstDefinition.DataSource = null;
+            lstDefinition.DataSource = UserType.Responses;
         }
 
         private void cmdSave_Click(object sender, EventArgs e)

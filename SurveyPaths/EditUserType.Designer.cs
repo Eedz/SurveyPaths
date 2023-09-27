@@ -1,6 +1,6 @@
 ﻿namespace SurveyPaths
 {
-    partial class frmEditUserType
+    partial class EditUserType
     {
         /// <summary>
         /// Required designer variable.

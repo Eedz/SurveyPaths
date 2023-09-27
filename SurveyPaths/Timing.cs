@@ -413,7 +413,7 @@ namespace SurveyPaths
                 foreach (RoutingVar rv in qr.RoutingVars)
                 {
                     string s = rv.Varname.Substring(0, rv.Varname.IndexOf("."));
-                    LinkedQuestion next = Questions.Find(x => x.VarName.FullVarName.Equals(s));
+                    LinkedQuestion next = Questions.Find(x => x.VarName.VarName.Equals(s));
 
                     foreach (int v in rv.ResponseCodes)
                         q.PossibleNext.Add(v, next);
@@ -434,7 +434,7 @@ namespace SurveyPaths
 
                 foreach (string s in routing)
                 {
-                    LinkedQuestion next = Questions.Find(x => x.VarName.FullVarName.Equals(s));
+                    LinkedQuestion next = Questions.Find(x => x.VarName.VarName.Equals(s));
 
                     q.PossibleNext.Add(i, next);
                     i++;

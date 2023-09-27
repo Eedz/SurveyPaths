@@ -12,7 +12,7 @@ namespace SurveyPathsTests
         public void LQ_GetFiltersByResponse_0RO_0NR()
         {
             LinkedQuestion q = new LinkedQuestion();
-            q.VarName.FullVarName = "AA000";
+            q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
             q.RespName = "0";
             q.NRName = "0";
@@ -27,7 +27,7 @@ namespace SurveyPathsTests
         public void LQ_GetFiltersByResponse_0RO_1NR()
         {
             LinkedQuestion q = new LinkedQuestion();
-            q.VarName.FullVarName = "AA000";
+            q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
             q.RespName = "0";
             q.NRName = "rdk";
@@ -42,7 +42,7 @@ namespace SurveyPathsTests
         public void LQ_GetFiltersByResponse_2RO_0NR()
         {
             LinkedQuestion q = new LinkedQuestion();
-            q.VarName.FullVarName = "AA000";
+            q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
             q.RespName ="yesno";
             q.RespOptions = "1  Yes\r\n2   No";

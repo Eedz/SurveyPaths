@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2015
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPaths", "SurveyPaths\SurveyPaths.csproj", "{E12C51A5-95AD-47A6-BFF1-E78059CC8C79}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveyPathsTests", "SurveyPathsTests\SurveyPathsTests.csproj", "{9F3AC108-1E14-492E-B070-949000DA337D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXMLHelper", "..\OpenXMLHelper\OpenXMLHelper\OpenXMLHelper.csproj", "{4768A591-7669-4ABE-8F28-F02D43D475A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITCReportLib", "..\ITCReportLib\ITCReportLib\ITCReportLib.csproj", "{8CEB9CDE-9507-4909-B517-7437ED8F42FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4768A591-7669-4ABE-8F28-F02D43D475A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

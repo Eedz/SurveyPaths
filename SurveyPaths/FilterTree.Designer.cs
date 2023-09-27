@@ -1,6 +1,6 @@
 ﻿namespace SurveyPaths
 {
-    partial class Form2
+    partial class FilterTree
     {
         /// <summary>
         /// Required designer variable.
