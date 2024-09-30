@@ -29,7 +29,7 @@ namespace SurveyPaths
 
         private void FindFilters(string filter)
         {
-            var found = Questions.Where(x => x.PreP.Contains(filter));
+            var found = Questions.Where(x => x.PrePW.WordingText.Contains(filter));
             if (found.Count() == 0)
             {
                 MessageBox.Show("No matches found!");

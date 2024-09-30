@@ -98,10 +98,10 @@ namespace SurveyPaths
             foreach (LinkedQuestion q in Questions)
             {
                 string prep = "";
-                if (q.PreP.Contains(".")) 
-                    prep = q.PreP.Substring(0, q.PreP.IndexOf("."));
+                if (q.PrePW.WordingText.Contains(".")) 
+                    prep = q.PrePW.WordingText.Substring(0, q.PrePW.WordingText.IndexOf("."));
                 else
-                    prep = q.PreP;
+                    prep = q.PrePW.WordingText;
 
 
                 // get the list of filter instructions for this question (both standard and non-standard VarNames)
@@ -408,7 +408,7 @@ namespace SurveyPaths
 
             foreach (LinkedQuestion q in Questions)
             {
-                var qr = new QuestionRouting(q.PstP, q.RespOptions);
+                var qr = new QuestionRouting(q.PstPW.WordingText, q.RespOptionsS.RespList);
 
                 foreach (RoutingVar rv in qr.RoutingVars)
                 {

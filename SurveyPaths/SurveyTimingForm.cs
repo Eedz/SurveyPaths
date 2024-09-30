@@ -17,7 +17,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLHelper;
-
+using HtmlRtfConverter;
+    
 namespace SurveyPaths
 {    
     public enum TimingType { Undefined, Max, Min }
@@ -318,7 +319,7 @@ namespace SurveyPaths
                     lq.Weight.Source = "A";
                     count0++;
                 }
-                else if (lq.PreP.StartsWith("Ask all.") || lq.PreP.Contains("Ask all."))
+                else if (lq.PrePW.WordingText.StartsWith("Ask all.") || lq.PrePW.WordingText.Contains("Ask all."))
                 {
                     lq.Weight.Source = "A";
                     lq.Weight.Value = 1;
@@ -365,7 +366,7 @@ namespace SurveyPaths
                     lstWeightedQuestionList.Items.Add(li);
 
 
-                FormatListItem(li, GetQuestionType(li));
+                FormUtilities.FormatListItem(li, lq.QuestionType);
             }
 
             lblMissingWeights.Text = "Missing weights: " + lstUnweightedQuestionList.Items.Count;
@@ -652,7 +653,7 @@ namespace SurveyPaths
             LinkedQuestion CurrentQuestion = (LinkedQuestion)bs.Current;
 
             rtbQuestionText.Rtf = "";
-            rtbQuestionText.Rtf = CurrentQuestion.GetQuestionTextRich();   
+            rtbQuestionText.Rtf = HtmlRtfConverter.Converter.HTMLToRtf(CurrentQuestion.GetQuestionTextHTML());   
 
             AddPrevButtons(CurrentQuestion);
 
@@ -1001,8 +1002,8 @@ namespace SurveyPaths
                 // basic info
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
-                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptions + "\r\n" + lq.NRCodes;
-                r["Question"] = lq.GetQuestionText();
+                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptionsS.RespList + "\r\n" + lq.NRCodesS.RespList;
+                r["Question"] = lq.GetQuestionTextHTML();
 
                 string filterExpList = "";
 
@@ -1015,7 +1016,7 @@ namespace SurveyPaths
                         if (found == null)
                             continue;
                         if (!filterExpressions.ContainsKey(fi.VarName.ToLower()))
-                            filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptions);
+                            filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptionsS.RespList);
                     }
 
                 }
@@ -1127,7 +1128,7 @@ namespace SurveyPaths
                         if (found == null)
                             continue;
                         if (!filterExpressions.ContainsKey(fi.VarName.ToLower()))
-                            filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptions);
+                            filterExpressions.Add(found.VarName.RefVarName.ToLower(), "<strong>" + fi.FilterExpression + "</strong>" + "\r\n" + found.VarName.VarLabel + "\r\n" + found.RespOptionsS.RespList);
                     }
 
                 }
@@ -1146,7 +1147,7 @@ namespace SurveyPaths
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
                 r["Filters"] = filterExpList;
-                r["Question"] = lq.GetQuestionText();
+                r["Question"] = lq.GetQuestionTextHTML();
                 r["VarLabel"] = lq.VarName.VarLabel;
                 
                 dt.Rows.Add(r);
@@ -1209,14 +1210,14 @@ namespace SurveyPaths
         /// </summary>
         /// <param name="row"></param>
         /// <returns>QuestionType enum based on the Qnum and VarName.</returns>
-        private QuestionType GetQuestionType(ListViewItem row)
+        private QuestionType GetQuestionType_old(ListViewItem row)
         {
 
             string qnum = row.Text;
             string varname = row.SubItems[1].Text;
 
-            int head = Int32.Parse(Utilities.GetSeriesQnum(qnum));
-            string tail = Utilities.GetQnumSuffix(qnum);
+            int head = Int32.Parse(qnum.Substring(0,3));
+            string tail = "";// Utilities.GetQnumSuffix(qnum.Substring(qnum.Fi);
 
             QuestionType qType;
 

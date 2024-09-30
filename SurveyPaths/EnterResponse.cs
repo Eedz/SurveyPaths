@@ -22,10 +22,10 @@ namespace SurveyPaths
 
             bs = new BindingSource()
             {
-                DataSource = questions.Where(x => !(string.IsNullOrEmpty(x.RespOptions))).ToList()
+                DataSource = questions.Where(x => !(string.IsNullOrEmpty(x.RespOptionsS.RespList))).ToList()
             };
             bs.PositionChanged += Bs_PositionChanged;
-            cboVarName.DataSource = questions.Where(x=>!(string.IsNullOrEmpty(x.RespOptions))).ToList();
+            cboVarName.DataSource = questions.Where(x=>!(string.IsNullOrEmpty(x.RespOptionsS.RespList))).ToList();
             cboVarName.DisplayMember = "VarName.RefVarName";
 
         }
@@ -34,7 +34,7 @@ namespace SurveyPaths
         {
             CurrentQuestion = (SurveyQuestion)bs.Current;
             rtbQuestionText.Rtf = "";
-            rtbQuestionText.Rtf = CurrentQuestion.GetQuestionTextRich();
+            rtbQuestionText.Rtf = HtmlRtfConverter.Converter.HTMLToRtf(CurrentQuestion.GetQuestionTextHTML());
 
         }
 
@@ -50,7 +50,7 @@ namespace SurveyPaths
         private void LoadQuestion(SurveyQuestion lq)
         {
             rtbQuestionText.Rtf = "";
-            rtbQuestionText.Rtf = lq.GetQuestionTextRich();
+            rtbQuestionText.Rtf = HtmlRtfConverter.Converter.HTMLToRtf(lq.GetQuestionTextHTML());
 
             cboResponse.DataSource = lq.GetRespNumbers();
         }

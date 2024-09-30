@@ -72,7 +72,7 @@ namespace SurveyPathsTests
         {
             LinkedQuestion q = new LinkedQuestion();
 
-            q.PreP = "Ask if AA001=1.";
+            q.PrePW.WordingText = "Ask if AA001=1.";
 
             List<FilterInstruction> fl = new List<FilterInstruction>();
 
@@ -101,7 +101,7 @@ namespace SurveyPathsTests
         {
             LinkedQuestion q = new LinkedQuestion();
 
-            q.PreP = "Ask if AA001=1 and AA002=1.";
+            q.PrePW.WordingText = "Ask if AA001=1 and AA002=1.";
             List<FilterInstruction> fl = new List<FilterInstruction>();
 
             FilterInstruction fi = new FilterInstruction()
@@ -137,7 +137,7 @@ namespace SurveyPathsTests
         {
             LinkedQuestion q = new LinkedQuestion();
 
-            q.PreP = "Ask if AA001=1 and AA002=1.";
+            q.PrePW.WordingText = "Ask if AA001=1 and AA002=1.";
             List<FilterInstruction> fl = new List<FilterInstruction>();
 
             FilterInstruction fi = new FilterInstruction()

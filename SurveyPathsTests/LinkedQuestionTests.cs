@@ -14,10 +14,7 @@ namespace SurveyPathsTests
             LinkedQuestion q = new LinkedQuestion();
             q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
-            q.RespName = "0";
-            q.NRName = "0";
-            q.RespOptions = "";
-
+            
             var fl = q.GetFiltersByResponse();
             Assert.IsTrue(fl.Count == 0);
 
@@ -29,9 +26,6 @@ namespace SurveyPathsTests
             LinkedQuestion q = new LinkedQuestion();
             q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
-            q.RespName = "0";
-            q.NRName = "rdk";
-            q.RespOptions = "8   refused";
 
             var fl = q.GetFiltersByResponse();
             Assert.IsTrue(fl.Count == 1);
@@ -44,8 +38,8 @@ namespace SurveyPathsTests
             LinkedQuestion q = new LinkedQuestion();
             q.VarName.VarName = "AA000";
             q.VarName.RefVarName = "AA000";
-            q.RespName ="yesno";
-            q.RespOptions = "1  Yes\r\n2   No";
+            q.RespOptionsS.RespSetName ="yesno";
+            q.RespOptionsS.RespList = "1  Yes\r\n2   No";
 
             var fl = q.GetFiltersByResponse();
             Assert.IsTrue(fl[0].VarName.Equals("AA000"));

@@ -76,15 +76,15 @@ namespace SurveyPaths
                 lq.VarName.VarLabel = q.Attributes["VarLabel"].InnerText;
                 lq.Qnum = q.Attributes["Qnum"].InnerText;
 
-                lq.PreP = q.Attributes["PreP"].InnerText;
-                lq.PreI = q.Attributes["PreI"].InnerText;
-                lq.PreA = q.Attributes["PreA"].InnerText;
-                lq.LitQ = q.Attributes["LitQ"].InnerText;
-                lq.PstI = q.Attributes["PstI"].InnerText;
-                lq.PstP = q.Attributes["PstP"].InnerText;
-                lq.RespName = q.Attributes["RespName"].InnerText;
-                lq.RespOptions = q.Attributes["RespOptions"].InnerText;
-                lq.NRCodes = q.Attributes["NRCodes"].InnerText;
+                lq.PrePW.WordingText = q.Attributes["PreP"].InnerText;
+                lq.PreIW.WordingText = q.Attributes["PreI"].InnerText;
+                lq.PreAW.WordingText = q.Attributes["PreA"].InnerText;
+                lq.LitQW.WordingText = q.Attributes["LitQ"].InnerText;
+                lq.PstIW.WordingText = q.Attributes["PstI"].InnerText;
+                lq.PstPW.WordingText = q.Attributes["PstP"].InnerText;
+                lq.RespOptionsS.RespSetName = q.Attributes["RespName"].InnerText;
+                lq.RespOptionsS.RespList = q.Attributes["RespOptions"].InnerText;
+                lq.NRCodesS.RespList = q.Attributes["NRCodes"].InnerText;
 
 
                 lq.Weight.Value = double.Parse(q.Attributes["Weight"].InnerText);
@@ -328,39 +328,39 @@ namespace SurveyPaths
 
                 // wordings
                 XmlAttribute prep = timingData.CreateAttribute("PreP");
-                prep.Value = q.PreP;
+                prep.Value = q.PrePW.WordingText;
                 varname.Attributes.Append(prep);
 
                 XmlAttribute prei = timingData.CreateAttribute("PreI");
-                prei.Value = q.PreI;
+                prei.Value = q.PreIW.WordingText;
                 varname.Attributes.Append(prei);
 
                 XmlAttribute prea = timingData.CreateAttribute("PreA");
-                prea.Value = q.PreA;
+                prea.Value = q.PreAW.WordingText;
                 varname.Attributes.Append(prea);
 
                 XmlAttribute litq = timingData.CreateAttribute("LitQ");
-                litq.Value = q.LitQ;
+                litq.Value = q.LitQW.WordingText;
                 varname.Attributes.Append(litq);
 
                 XmlAttribute psti = timingData.CreateAttribute("PstI");
-                psti.Value = q.PstI;
+                psti.Value = q.PstIW.WordingText;
                 varname.Attributes.Append(psti);
 
                 XmlAttribute pstp = timingData.CreateAttribute("PstP");
-                pstp.Value = q.PstP;
+                pstp.Value = q.PstPW.WordingText;
                 varname.Attributes.Append(pstp);
 
                 XmlAttribute respoptions = timingData.CreateAttribute("RespOptions");
-                respoptions.Value = q.RespOptions;
+                respoptions.Value = q.RespOptionsS.RespList;
                 varname.Attributes.Append(respoptions);
 
                 XmlAttribute respname = timingData.CreateAttribute("RespName");
-                respname.Value = q.RespName;
+                respname.Value = q.RespOptionsS.RespSetName;
                 varname.Attributes.Append(respname);
 
                 XmlAttribute nrcodes = timingData.CreateAttribute("NRCodes");
-                nrcodes.Value = q.NRCodes;
+                nrcodes.Value = q.NRCodesS.RespList;
                 varname.Attributes.Append(nrcodes);
                 
                 XmlNode scenarios = timingData.CreateElement("Scenarios");
@@ -1156,8 +1156,8 @@ namespace SurveyPaths
                 }
             }
 
-            direct = Utilities.TrimString(direct, "\r\n");
-            indirect = Utilities.TrimString(indirect, "\r\n");
+            direct = direct.TrimAndRemoveAll("\r\n");
+            indirect = indirect.TrimAndRemoveAll("\r\n");
             if (!string.IsNullOrEmpty(indirect))
                 indirect += "\r\n\r\n";
 
@@ -1165,7 +1165,7 @@ namespace SurveyPaths
                         "\r\n" + direct + "\r\n\r\n" +
                         indirect;
 
-            filterList = Utilities.TrimString(filterList, "\r\n");
+            filterList = filterList.TrimAndRemoveAll("\r\n");
             return filterList;
         }
 
@@ -1215,12 +1215,12 @@ namespace SurveyPaths
                             indirect += "<strong>" + s.VarName.RefVarName + "</strong> - " + s.VarName.VarLabel + "\r\n";
                         }
 
-                        indirect = Utilities.TrimString(indirect, "\r\n");
+                        indirect = indirect.TrimAndRemoveAll("\r\n");
                     }
                     indirectCount = indirectList.Count();
                 }
 
-                direct = Utilities.TrimString(direct, "\r\n");
+                direct = direct.TrimAndRemoveAll("\r\n");
 
                 if (!string.IsNullOrEmpty(indirect))
                     indirect += "\r\n\r\n";
@@ -1233,7 +1233,7 @@ namespace SurveyPaths
                             indirect;
             }
 
-            filterList = Utilities.TrimString(filterList, "\r\n");
+            filterList = filterList.TrimAndRemoveAll("\r\n");
             return filterList;
         }
 

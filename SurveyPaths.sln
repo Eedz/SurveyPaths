@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXMLHelper", "..\OpenXML
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITCReportLib", "..\ITCReportLib\ITCReportLib\ITCReportLib.csproj", "{8CEB9CDE-9507-4909-B517-7437ED8F42FE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlRtfConverter", "..\HtmlRtfConverter\HtmlRtfConverter\HtmlRtfConverter.csproj", "{2601D57D-ADA7-40E6-A7CC-F55E78BAE943}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CEB9CDE-9507-4909-B517-7437ED8F42FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2601D57D-ADA7-40E6-A7CC-F55E78BAE943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2601D57D-ADA7-40E6-A7CC-F55E78BAE943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2601D57D-ADA7-40E6-A7CC-F55E78BAE943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2601D57D-ADA7-40E6-A7CC-F55E78BAE943}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

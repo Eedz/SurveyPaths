@@ -432,7 +432,7 @@ namespace SurveyPaths
 
                 lstWeightedQuestionList.Items.Add(li);
 
-                FormatListItem(li, GetQuestionType(li));
+                FormUtilities.FormatListItem(li, lq.QuestionType);
             }
             totaltime = totaltime / 60;
             lblTotal.Text = "Total Questions: " + list.Count() + "    Total Time: " + totaltime.ToString("N2");
@@ -506,7 +506,7 @@ namespace SurveyPaths
 
             foreach (LinkedQuestion q in CurrentTiming.Questions)
             {
-                var qr = new QuestionRouting(q.PstP, q.RespOptions);
+                var qr = new QuestionRouting(q.PstPW.WordingText, q.RespOptionsS.RespList);
 
                 foreach (RoutingVar rv in qr.RoutingVars)
                 {
@@ -682,7 +682,7 @@ namespace SurveyPaths
             LinkedQuestion CurrentQuestion = (LinkedQuestion)bs.Current;
 
             rtbQuestionText.Rtf = "";
-            rtbQuestionText.Rtf = CurrentQuestion.GetQuestionTextRich();
+            rtbQuestionText.Rtf = HtmlRtfConverter.Converter.HTMLToRtf(CurrentQuestion.GetQuestionTextHTML());
 
             AddNextButtons(CurrentQuestion);
             AddPrevButtons(CurrentQuestion);
@@ -966,18 +966,15 @@ namespace SurveyPaths
             // otherwise, the list is empty
             foreach (LinkedQuestion lq in UserTimings[0].Questions)
             {
-
                 // construct the row
                 DataRow r = dt.NewRow();
 
                 // basic info
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
-                r["Question"] = lq.GetQuestionText();
-                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptions + "\r\n" + lq.NRCodes;
+                r["Question"] = lq.GetQuestionTextHTML();
+                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptionsS.RespList + "\r\n" + lq.NRCodesS.RespList;
                 
-                
-
                 //if heading, move on
                 if (lq.VarName.RefVarName.StartsWith("Z"))
                 {
@@ -987,10 +984,9 @@ namespace SurveyPaths
 
                 // add filter if there is a VarName in the filter
                 if (lq.FilteredOn.Count > 0)
-                    r["Filter"] = lq.PreP;
+                    r["Filter"] = lq.PrePW.WordingText;
                 else
                     r["Filter"] = "";
-
 
                 r["Words"] = lq.WordCount();
 
@@ -1150,8 +1146,8 @@ namespace SurveyPaths
                 r["Qnum"] = lq.Qnum;
                 r["VarName"] = lq.VarName.RefVarName;
                 r["Filters"] = filterExpList;
-                r["Question"] = lq.GetQuestionText();
-                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptions + "\r\n" + lq.NRCodes;
+                r["Question"] = lq.GetQuestionTextHTML();
+                r["VarLabel"] = "<strong><em>" + lq.VarName.VarLabel + "</em></strong>\r\n" + lq.RespOptionsS.RespList + "\r\n" + lq.NRCodesS.RespList;
 
 
                 //filter info
@@ -1275,8 +1271,8 @@ namespace SurveyPaths
                 }
             }
 
-            direct = Utilities.TrimString(direct, "\r\n");
-            indirect = Utilities.TrimString(indirect, "\r\n");
+            direct = direct.TrimAndRemoveAll("\r\n");
+            indirect = indirect.TrimAndRemoveAll("\r\n");
             if (!string.IsNullOrEmpty(indirect))
                 indirect += "\r\n\r\n";
 
@@ -1284,7 +1280,7 @@ namespace SurveyPaths
                         "\r\n" + direct + "\r\n\r\n" +
                         indirect;
 
-            filterList = Utilities.TrimString(filterList, "\r\n");
+            filterList = filterList.TrimAndRemoveAll("\r\n");
             return filterList;
         }
 
@@ -1334,12 +1330,12 @@ namespace SurveyPaths
                             indirect += "<strong>" + s.VarName.RefVarName + "</strong> - " + s.VarName.VarLabel + "\r\n";
                         }
 
-                        indirect = Utilities.TrimString(indirect, "\r\n");
+                        indirect = indirect.TrimAndRemoveAll("\r\n");
                     }
                     indirectCount = indirectList.Count();
                 }
 
-                direct = Utilities.TrimString(direct, "\r\n");
+                direct = direct.TrimAndRemoveAll("\r\n");
                 
                 if (!string.IsNullOrEmpty(indirect))
                     indirect += "\r\n\r\n";
@@ -1352,11 +1348,9 @@ namespace SurveyPaths
                             indirect ;
             }
 
-            filterList = Utilities.TrimString(filterList, "\r\n");
+            filterList = filterList.TrimAndRemoveAll("\r\n");
             return filterList;
         }
-
-        
 
         /// <summary>
         /// Adds color and formatting to the specified row, based on its QuestionType.
@@ -1395,43 +1389,6 @@ namespace SurveyPaths
 
             }
 
-        }
-
-        /// <summary>
-        /// Determines the type of questions for the given row.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <returns>QuestionType enum based on the Qnum and VarName.</returns>
-        private QuestionType GetQuestionType(ListViewItem row)
-        {
-            string qnum = row.Text;
-            string varname = row.SubItems[1].Text;
-
-            int head = Int32.Parse(Utilities.GetSeriesQnum(qnum));
-            string tail = Utilities.GetQnumSuffix(qnum);
-
-            QuestionType qType;
-
-            // get Question Type
-            if (varname.StartsWith("Z"))
-            {
-                if (varname.EndsWith("s"))
-                    qType = QuestionType.Subheading; // subheading
-                else
-                    qType = QuestionType.Heading; // heading
-            }
-            else if (varname.StartsWith("HG"))
-            {
-                qType = QuestionType.Standalone; // QuestionType.InterviewerNote; // interviewer note
-            }
-            else
-            {
-                if ((tail == "" || tail == "a") && (head != 0))
-                    qType = QuestionType.Standalone; // standalone or first in series
-                else
-                    qType = QuestionType.Series; // series
-            }
-            return qType;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -1671,7 +1628,7 @@ namespace SurveyPaths
 
             universe = universe.Replace("Ask if ", "");
 
-            universe = Utilities.TrimString(universe, "\r\n");
+            universe = universe.TrimAndRemoveAll("\r\n");
 
             string[] lines = universe.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             string[] distinct = lines.Distinct().ToArray();
@@ -1705,7 +1662,7 @@ namespace SurveyPaths
                     result += "OR\r\n";
                 }
 
-                result = Utilities.TrimString(result, "OR\r\n");
+                result = result.TrimAndRemoveAll("OR\r\n");
 
                 result += " AND \r\n";
 
@@ -1726,8 +1683,8 @@ namespace SurveyPaths
         private string PrintFilters(LinkedQuestion question)
         {
             string result = "";
-            if (!question.PreP.StartsWith("Ask all."))
-                result += question.PreP.Replace("<br>", "\r\n") + "\r\n";
+            if (!question.PrePW.WordingText.StartsWith("Ask all."))
+                result += question.PrePW.WordingText.Replace("<br>", "\r\n") + "\r\n";
 
             foreach (LinkedQuestion q in question.FilteredOn)
             {
